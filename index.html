@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>All Mobile Video</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#e7e9ed;color:#111}
+.app{min-height:100vh;display:grid;grid-template-columns:360px 1fr;grid-template-rows:120px 1fr 48px}
+header{grid-column:1/3;background:#050505;color:white;display:grid;grid-template-columns:360px 1fr 320px}
+.logo{background:white;display:flex;align-items:center;justify-content:center;padding:8px}.logo img{max-width:100%;max-height:104px}
+.headtitle{display:flex;flex-direction:column;align-items:center;justify-content:center}.headtitle h1{font-size:44px;margin:0}.headtitle div{font-size:20px}
+.clock{display:flex;align-items:center;padding:16px}.clockbox{width:100%;border:1px solid #444;border-radius:7px}.clocktop{padding:12px;text-align:center;font-weight:700;font-size:19px}.autosave{border-top:1px solid #333;padding:12px;text-align:center;color:#38d353;font-weight:800}
+.sidebar{background:#f7f7f7;border-right:1px solid #ccc;padding:20px 18px;overflow:auto}.main{padding:16px 20px;overflow:auto}
+footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-content:center;align-items:center;gap:16px}
+.mode{width:100%;padding:18px;border:0;border-radius:8px;color:white;text-align:left;margin-bottom:12px;font-weight:800;font-size:22px;cursor:pointer}.outmode{background:#0a8d36}.inmode{background:#155fca}.active{outline:4px solid #222}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+
+
+
+
+
+.tool{background:white;border:1px solid #ccc;border-radius:6px;padding:12px;font-weight:700;cursor:pointer;min-height:56px}.wide{grid-column:1/3}
+.summary{margin-top:18px;background:white;border:1px solid #ccc;border-radius:6px;overflow:hidden}.summary h3{text-align:center;color:#0643b4}.sumrow{display:flex;justify-content:space-between;padding:14px 18px;border-top:1px solid #ddd;font-weight:700}.sumrow b{font-size:28px}.red{color:#d71920}.green{color:#07892d}.orange{color:#d95f02}
+.jobinfo{display:grid;grid-template-columns:1.2fr .85fr .8fr .85fr 1fr 1fr;background:white;border:1px solid #ccc;border-radius:7px;overflow:hidden;margin-bottom:16px}.jobbox{padding:18px 28px;border-right:1px solid #ddd}.jobbox:last-child{border-right:0}.jobbox label{display:block;color:#0748b2;font-weight:800;margin-bottom:10px}.jobbox input{width:100%;border:0;outline:0;font-size:25px;font-weight:800}
+.jobbox select{width:100%;border:0;outline:0;font-size:17px;font-weight:800;background:white;padding:4px 0}
+.checkerAdd{display:flex;gap:5px;margin-top:7px}
+.checkerAdd input{font-size:12px!important;font-weight:500!important;border:1px solid #bbb!important;border-radius:4px!important;padding:6px!important}
+.checkerAdd button{border:0;background:#0753bb;color:white;border-radius:4px;padding:6px 8px;font-weight:700;cursor:pointer}
+.history{background:white;border:1px solid #ccc;border-radius:7px;overflow:hidden}.histhead{background:#050505;color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}.histhead h2{margin:0}.search{display:flex;gap:8px}.search input{padding:10px 12px;width:280px;border-radius:5px;border:0}.search button{background:#2d2d2d;color:white;border:0;border-radius:4px;padding:0 12px}
+.tablewrap{max-height:500px;overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:9px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;font-size:13px}th{background:#0753bb;color:white;position:sticky;top:0}.center{text-align:center}
+.noteCell{display:flex;align-items:center;gap:8px}
+.noteText{flex:1;min-width:70px}
+.noteEdit{border:1px solid #b8c4d6;background:#fff;color:#0748b2;border-radius:4px;padding:5px 8px;font-weight:700;cursor:pointer}
+.noteEdit:hover{background:#eef4ff}
+.statusIN{color:#07892d;font-weight:800}.statusOUT{color:#d71920;font-weight:800}
+.bottom{margin-top:14px;background:white;border:1px solid #ccc;border-radius:7px;padding:16px;display:grid;grid-template-columns:220px 1fr 1fr;gap:20px}.bottom label{display:block;color:#0647b6;font-weight:800;margin-bottom:8px}.last{font-size:24px;font-weight:800}.scaninput{width:100%;padding:16px;font-size:22px;text-align:center;border:2px solid #0a55cc;border-radius:5px}.notes{width:100%;height:76px;padding:12px}.msg{margin-top:10px;padding:10px;background:#eef4ff;color:#1c3e77;border-radius:5px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center}.hidden{display:none}.modalcard{background:white;width:min(900px,92vw);max-height:82vh;overflow:auto;border-radius:10px;padding:20px}
+.jobList{display:grid;gap:10px;margin-top:16px}
+.jobItem{border:1px solid #ccd3dd;border-radius:7px;padding:14px;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
+.jobItem.activeJob{border:2px solid #0753bb;background:#eef4ff}
+.jobItemTitle{font-size:18px;font-weight:800}
+.jobItemMeta{font-size:13px;color:#666;margin-top:4px}
+.jobActions{display:flex;gap:7px}
+.jobActions button{border:0;border-radius:5px;padding:8px 10px;font-weight:700;cursor:pointer}
+.openJobBtn{background:#0753bb;color:#fff}.deleteJobBtn{background:#d71920;color:#fff}
+
+@media print{
+  @page{size:landscape;margin:10mm}
+  body{background:white!important;color:#111!important}
+  .app{display:block!important;min-height:auto!important}
+  header{
+    display:grid!important;
+    grid-template-columns:220px 1fr 250px!important;
+    height:auto!important;
+    background:#050505!important;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .logo{height:95px!important}
+  .logo img{max-height:82px!important}
+  .headtitle h1{font-size:30px!important}
+  .headtitle div{font-size:14px!important}
+  .clock{padding:8px!important}
+  .clocktop{font-size:14px!important;padding:8px!important}
+  .autosave{display:none!important}
+
+  .sidebar{display:none!important}
+  .main{
+    display:block!important;
+    padding:10px 0 0!important;
+    overflow:visible!important;
+    width:100%!important;
+  }
+  footer{display:none!important}
+
+  .jobinfo{
+    display:grid!important;
+    grid-template-columns:1.2fr .85fr .8fr .85fr 1fr 1fr!important;
+    margin-bottom:10px!important;
+    break-inside:avoid!important;
+  }
+  .jobbox{padding:10px 16px!important}
+  .jobbox input{
+    font-size:18px!important;
+    color:#111!important;
+    -webkit-text-fill-color:#111!important;
+  }
+
+  .history{
+    border:1px solid #999!important;
+    overflow:visible!important;
+  }
+  .histhead{
+    background:#050505!important;
+    color:white!important;
+    padding:8px 12px!important;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .histhead h2{font-size:18px!important}
+  .search{display:none!important}
+  .tablewrap{
+    max-height:none!important;
+    overflow:visible!important;
+  }
+  table{font-size:10px!important}
+  th,td{
+    padding:5px 6px!important;
+    font-size:10px!important;
+  }
+  th{
+    background:#0753bb!important;
+    color:white!important;
+    position:static!important;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .statusIN{color:#07892d!important}
+  .statusOUT{color:#d71920!important}
+  .noteEdit{display:none!important}
+
+  .bottom{
+    display:grid!important;
+    grid-template-columns:180px 1fr 1fr!important;
+    margin-top:10px!important;
+    padding:10px!important;
+    break-inside:avoid!important;
+  }
+  .scaninput{
+    border:1px solid #999!important;
+    font-size:14px!important;
+    padding:8px!important;
+  }
+  .notes{
+    border:1px solid #999!important;
+    height:52px!important;
+  }
+  .msg{display:none!important}
+  .modal{display:none!important}
+
+  .printSummary{
+    display:grid!important;
+    grid-template-columns:repeat(4,1fr)!important;
+    gap:8px!important;
+    margin:0 0 10px!important;
+  }
+  .printSummaryBox{
+    border:1px solid #aaa!important;
+    border-radius:5px!important;
+    padding:8px!important;
+    text-align:center!important;
+    background:#f5f5f5!important;
+  }
+  .printSummaryBox .label{
+    font-size:10px!important;
+    font-weight:700!important;
+  }
+  .printSummaryBox .value{
+    font-size:20px!important;
+    font-weight:800!important;
+  }
+}
+
+@media(max-width:1100px){.app{grid-template-columns:290px 1fr}.headtitle h1{font-size:34px}.jobinfo{grid-template-columns:1fr}.bottom{grid-template-columns:1fr}}
+
+@media print{
+  html,body{
+    width:100%!important;
+    height:auto!important;
+    overflow:visible!important;
+  }
+  .app{
+    width:100%!important;
+    max-width:none!important;
+    overflow:visible!important;
+  }
+  .main{
+    width:100%!important;
+    max-width:none!important;
+    height:auto!important;
+    overflow:visible!important;
+  }
+  .history{
+    width:100%!important;
+    max-width:none!important;
+    height:auto!important;
+    overflow:visible!important;
+  }
+  .tablewrap{
+    width:100%!important;
+    max-width:none!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+  .tablewrap table{
+    width:100%!important;
+    table-layout:auto!important;
+    page-break-inside:auto!important;
+  }
+  .tablewrap thead{
+    display:table-header-group!important;
+  }
+  .tablewrap tbody{
+    display:table-row-group!important;
+  }
+  .tablewrap tr{
+    page-break-inside:avoid!important;
+    break-inside:avoid!important;
+  }
+  .tablewrap th,
+  .tablewrap td{
+    white-space:normal!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+    word-break:break-word!important;
+    font-size:8.5px!important;
+    line-height:1.15!important;
+    padding:4px!important;
+  }
+  .tablewrap th:nth-child(1),
+  .tablewrap td:nth-child(1){width:3%!important}
+  .tablewrap th:nth-child(2),
+  .tablewrap td:nth-child(2){width:13%!important}
+  .tablewrap th:nth-child(3),
+  .tablewrap td:nth-child(3){width:20%!important}
+  .tablewrap th:nth-child(4),
+  .tablewrap td:nth-child(4){width:16%!important}
+  .tablewrap th:nth-child(5),
+  .tablewrap td:nth-child(5){width:10%!important}
+  .tablewrap th:nth-child(6),
+  .tablewrap td:nth-child(6){width:16%!important}
+  .tablewrap th:nth-child(7),
+  .tablewrap td:nth-child(7){width:10%!important}
+  .tablewrap th:nth-child(8),
+  .tablewrap td:nth-child(8){width:8%!important}
+  .bottom{
+    display:none!important;
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+<div class="logo"><img src="amv-logo.jpg" alt="AMV"></div>
+<div class="headtitle"><h1>All Mobile Video</h1><div>ASSET / EQUIPMENT TRACKING</div></div>
+<div class="clock"><div class="clockbox"><div class="clocktop"><span id="date"></span> &nbsp; <span id="time"></span></div><div class="autosave">AUTOSAVE: ON ✓</div></div></div>
+</header>
+
+<aside class="sidebar">
+<button id="outBtn" class="mode outmode active" onclick="setMode('OUT')">⇥ &nbsp; SCAN OUT<br><span style="font-size:15px;font-weight:500">(CHECK OUT)</span></button>
+<button id="inBtn" class="mode inmode" onclick="setMode('IN')">☑ &nbsp; SCAN IN<br><span style="font-size:15px;font-weight:500">(CHECK IN)</span></button>
+<div class="tools">
+<button class="tool" onclick="document.getElementById('importFile').click()">⇩ IMPORT EXCEL</button>
+<button class="tool" onclick="exportExcel()">⇧ EXPORT EXCEL</button>
+<button class="tool" onclick="openExisting()">📁 OPEN EXISTING EXCEL</button>
+<button class="tool" onclick="saveExisting()">💾 SAVE EXCEL</button>
+<button class="tool" onclick="saveAs()">📄 SAVE EXCEL AS</button>
+<button class="tool" onclick="completeJob()">⚑ COMPLETE JOB</button>
+<button class="tool" onclick="undoLast()">↶ UNDO LAST SCAN</button>
+<button class="tool" onclick="showOutstanding()">📋 OUTSTANDING ITEMS</button>
+<button class="tool" onclick="printJob()">🖨 PRINT JOB</button>
+<button class="tool" onclick="showJobs()">▣ OPEN JOBS</button>
+<button class="tool" onclick="newJob()">⊕ NEW JOB</button>
+</div>
+<input id="importFile" type="file" accept=".xlsx,.xls,.csv" style="display:none">
+
+<div class="summary"><h3>SUMMARY</h3>
+<div class="sumrow"><span>TOTAL ITEMS</span><b id="totalCount">0</b></div>
+<div class="sumrow"><span class="red">CHECKED OUT</span><b id="outCount" class="red">0</b></div>
+<div class="sumrow"><span class="green">CHECKED IN</span><b id="inCount" class="green">0</b></div>
+<div class="sumrow"><span class="orange">OUTSTANDING</span><b id="outstandingCount" class="orange">0</b></div>
+</div>
+</aside>
+
+<main class="main">
+<div class="jobinfo">
+<div class="jobbox"><label>JOB NAME</label><input id="jobName" placeholder="Enter job name"></div>
+<div class="jobbox"><label>JOB NUMBER</label><input id="jobNumber" placeholder="Enter job number"></div>
+<div class="jobbox"><label>BID #</label><input id="bidNumber" placeholder="Enter bid number"></div>
+<div class="jobbox"><label>WORK ORDER #</label><input id="workOrder" placeholder="Enter work order #"></div>
+<div class="jobbox"><label>PERSON SCAN OUT</label><input id="scannerName" placeholder="Enter name"></div>
+<div class="jobbox"><label>PERSON SCAN IN</label><input id="scannerInName" placeholder="Enter name"></div>
+<div class="jobbox">
+<label>EQUIPMENT CHECKED BY</label>
+<select id="equipmentChecker"></select>
+<div class="checkerAdd"><input id="newCheckerName" placeholder="Add name"><button type="button" onclick="addCheckerName()">ADD NAME</button></div>
+</div>
+<div class="jobbox">
+<label>TRUCK NAME</label>
+<select id="truckName"></select>
+<div class="checkerAdd"><input id="newTruckName" placeholder="Add truck"><button type="button" onclick="addTruckName()">ADD NAME</button></div>
+</div>
+</div>
+
+<div id="printSummary" class="printSummary" style="display:none">
+  <div class="printSummaryBox"><div class="label">TOTAL ITEMS</div><div id="printTotal" class="value">0</div></div>
+  <div class="printSummaryBox"><div class="label">CHECKED OUT</div><div id="printOut" class="value">0</div></div>
+  <div class="printSummaryBox"><div class="label">CHECKED IN</div><div id="printIn" class="value">0</div></div>
+  <div class="printSummaryBox"><div class="label">OUTSTANDING</div><div id="printOutstanding" class="value">0</div></div>
+</div>
+
+<div class="history">
+<div class="histhead"><h2>SCAN HISTORY</h2><div class="search"><input id="search" placeholder="Search barcode..." oninput="render()"><button onclick="clearSearch()">CLEAR SEARCH</button></div></div>
+<div class="tablewrap"><table><thead><tr><th>#</th><th>BARCODE</th><th>DESCRIPTION / NOTES</th><th>SCAN OUT DATE / TIME</th><th>BY</th><th>SCAN IN DATE / TIME</th><th>BY</th><th>STATUS</th></tr></thead><tbody id="rows"></tbody></table></div>
+</div>
+
+<div class="bottom">
+<div><label>LAST SCANNED</label><div id="lastBarcode" class="last">—</div><div id="lastStatus">No scans yet</div></div>
+<div><label>SCAN BARCODE HERE</label><input id="scan" class="scaninput" placeholder="Scan or type barcode..."><div style="text-align:center;color:#666;margin-top:6px">Press Enter after scan</div></div>
+<div><label>NOTES (Optional)</label><textarea id="notes" class="notes" placeholder="Add notes here..."></textarea></div>
+</div>
+<div id="msg" class="msg">Ready. Current mode: SCAN OUT.</div>
+</main>
+
+<footer><span>All Mobile Video v41</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>All changes are saved automatically ✓</span></footer>
+</div>
+
+<div id="modal" class="modal hidden"><div class="modalcard"><button onclick="closeModal()" style="float:right">CLOSE</button><h2>Outstanding Items</h2><div id="modalBody"></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+const JOBS_KEY="allmobilevideo_v28_jobs", ACTIVE_KEY="allmobilevideo_v28_active", CHECKERS_KEY="allmobilevideo_v36_checkers", TRUCKS_KEY="allmobilevideo_v37_trucks";
+let checkerNames=JSON.parse(localStorage.getItem(CHECKERS_KEY)||"[]");
+let truckNames=JSON.parse(localStorage.getItem(TRUCKS_KEY)||"[]");
+let jobs=JSON.parse(localStorage.getItem(JOBS_KEY)||"{}");
+let activeJobId=localStorage.getItem(ACTIVE_KEY)||"";
+function makeJobId(){return "JOB-"+Date.now()+"-"+Math.random().toString(36).slice(2,8)}
+if(!activeJobId || !jobs[activeJobId]){
+  activeJobId=makeJobId();
+  jobs[activeJobId]={meta:{jobName:"",jobNumber:"",scannerName:"",complete:false},records:{},history:[]};
+  localStorage.setItem(ACTIVE_KEY,activeJobId);
+  localStorage.setItem(JOBS_KEY,JSON.stringify(jobs));
+}
+let records=jobs[activeJobId].records||{},meta=jobs[activeJobId].meta||{},history=jobs[activeJobId].history||[];
+let mode="OUT",complete=!!meta.complete,fileHandle=null,fileName="";
+const jobName=document.getElementById("jobName"),jobNumber=document.getElementById("jobNumber"),bidNumber=document.getElementById("bidNumber"),workOrder=document.getElementById("workOrder"),scannerName=document.getElementById("scannerName"),scannerInName=document.getElementById("scannerInName"),equipmentChecker=document.getElementById("equipmentChecker"),newCheckerName=document.getElementById("newCheckerName"),truckName=document.getElementById("truckName"),newTruckName=document.getElementById("newTruckName"),scan=document.getElementById("scan"),notes=document.getElementById("notes"),search=document.getElementById("search"),rows=document.getElementById("rows");
+let audioCtx=null;
+function getAudioCtx(){if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;if(AC)audioCtx=new AC()}if(audioCtx&&audioCtx.state==="suspended")audioCtx.resume();return audioCtx}
+function tone(ctx,freq,start,duration,volume,type){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type||"sine";o.frequency.setValueAtTime(freq,start);g.gain.setValueAtTime(.0001,start);g.gain.exponentialRampToValueAtTime(volume,start+.01);g.gain.exponentialRampToValueAtTime(.0001,start+duration);o.connect(g);g.connect(ctx.destination);o.start(start);o.stop(start+duration+.02)}
+function acceptedSound(){const c=getAudioCtx();if(!c)return;let t=c.currentTime;tone(c,660,t,.10,.16,"sine");tone(c,880,t+.11,.15,.18,"sine")}
+function rejectedSound(){const c=getAudioCtx();if(!c)return;let t=c.currentTime;tone(c,220,t,.18,.22,"square");tone(c,165,t+.20,.25,.22,"square")}
+function clean(v){return String(v??"").replace(/[\r\n\t]/g,"").trim()} function now(){return new Date().toLocaleString()}
+function save(){
+  meta={
+    jobName:clean(jobName.value),
+    jobNumber:clean(jobNumber.value),
+    bidNumber:clean(bidNumber.value),
+    workOrder:clean(workOrder.value),
+    scannerName:clean(scannerName.value),
+    scannerInName:clean(scannerInName.value),
+    equipmentChecker:clean(equipmentChecker.value),
+    truckName:clean(truckName.value),
+    complete
+  };
+  jobs[activeJobId]={meta,records,history};
+  localStorage.setItem(JOBS_KEY,JSON.stringify(jobs));
+  localStorage.setItem(ACTIVE_KEY,activeJobId);
+}
+jobName.value=meta.jobName||"";jobNumber.value=meta.jobNumber||"";bidNumber.value=meta.bidNumber||"";workOrder.value=meta.workOrder||"";scannerName.value=meta.scannerName||"";scannerInName.value=meta.scannerInName||"";renderCheckerOptions(meta.equipmentChecker||"");renderTruckOptions(meta.truckName||"");complete=!!meta.complete;[jobName,jobNumber,bidNumber,workOrder,scannerName,scannerInName].forEach(e=>e.addEventListener("input",save));equipmentChecker.addEventListener("change",save);truckName.addEventListener("change",save);newCheckerName.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addCheckerName()}});newTruckName.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addTruckName()}});
+function renderCheckerOptions(selected){
+  const wanted=clean(selected);
+  equipmentChecker.innerHTML='<option value="">-- Select name --</option>';
+  checkerNames.slice().sort((a,b)=>a.localeCompare(b)).forEach(name=>{
+    const o=document.createElement("option");o.value=name;o.textContent=name;equipmentChecker.appendChild(o);
+  });
+  equipmentChecker.value=wanted;
+}
+function addCheckerName(){
+  const name=clean(newCheckerName.value);if(!name)return;
+  if(!checkerNames.some(n=>n.toLowerCase()===name.toLowerCase())){
+    checkerNames.push(name);localStorage.setItem(CHECKERS_KEY,JSON.stringify(checkerNames));
+  }
+  renderCheckerOptions(name);newCheckerName.value="";save();
+}
+function renderTruckOptions(selected){
+  const wanted=clean(selected);
+  truckName.innerHTML='<option value="">-- Select truck --</option>';
+  truckNames.slice().sort((a,b)=>a.localeCompare(b)).forEach(name=>{
+    const o=document.createElement("option");o.value=name;o.textContent=name;truckName.appendChild(o);
+  });
+  truckName.value=wanted;
+}
+function addTruckName(){
+  const name=clean(newTruckName.value);if(!name)return;
+  if(!truckNames.some(n=>n.toLowerCase()===name.toLowerCase())){
+    truckNames.push(name);localStorage.setItem(TRUCKS_KEY,JSON.stringify(truckNames));
+  }
+  renderTruckOptions(name);newTruckName.value="";save();
+}
+function clock(){let d=new Date();date.textContent=d.toLocaleDateString();time.textContent=d.toLocaleTimeString()}setInterval(clock,1000);clock();
+function message(t){msg.textContent=t} function key(v){let s=clean(v).toLowerCase();return Object.keys(records).find(k=>k.toLowerCase()===s)||null}
+function setMode(m){mode=m;outBtn.classList.toggle("active",m==="OUT");inBtn.classList.toggle("active",m==="IN");message("Ready. Current mode: SCAN "+m+".");scan.focus()}
+function process(){
+if(complete){rejectedSound();message("Job is COMPLETE. Start NEW JOB to scan again.");return}
+if(!clean(jobName.value)||!clean(jobNumber.value)){rejectedSound();message("Enter Job Name and Job Number first.");return}
+if(mode==="OUT"&&!clean(scannerName.value)){rejectedSound();message("Enter PERSON SCAN OUT first.");return}
+if(mode==="IN"&&!clean(scannerInName.value)){rejectedSound();message("Enter PERSON SCAN IN first.");return}
+let b=clean(scan.value);if(!b)return;let k=key(b),t=now(),n=clean(notes.value);
+if(mode==="OUT"){
+if(k){rejectedSound();message("DUPLICATE BARCODE REJECTED — "+b+" already exists.");scan.value="";scan.focus();return}
+records[b]={barcode:b,notes:n,scanOut:t,scanOutBy:clean(scannerName.value),scanIn:"",scanInBy:"",status:"OUT"};history.push({type:"OUT",barcode:b});lastBarcode.textContent=b;lastStatus.textContent="(OUT)"
+}else{
+if(!k){rejectedSound();message("SCAN IN REJECTED — barcode was never scanned OUT.");scan.value="";scan.focus();return}
+let r=records[k];if(r.status==="IN"){rejectedSound();message("DUPLICATE SCAN IN REJECTED — "+k+" is already IN.");scan.value="";scan.focus();return}
+r.scanIn=t;r.scanInBy=clean(scannerInName.value);r.status="IN";if(n)r.notes=n;history.push({type:"IN",barcode:k});lastBarcode.textContent=k;lastStatus.textContent="(IN)"
+}
+save();render();acceptedSound();message("SCAN "+mode+" ACCEPTED — "+b);scan.value="";notes.value="";scan.focus()
+}
+scan.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();process()}});
+function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function editNote(barcode){
+  let k=key(barcode);if(!k)return;
+  let current=records[k].notes||"";
+  let updated=prompt("ADD / EDIT NOTES FOR BARCODE\n"+k,current);
+  if(updated===null)return;
+  records[k].notes=clean(updated);
+  save();render();
+  message("Notes updated for "+k+".");
+}
+function render(){let q=clean(search.value).toLowerCase();rows.innerHTML="";let arr=Object.values(records).filter(r=>(r.barcode+" "+(r.notes||"")).toLowerCase().includes(q));arr.forEach((r,i)=>{let tr=document.createElement("tr");tr.innerHTML="<td class='center'>"+(i+1)+"</td><td><b>"+esc(r.barcode)+"</b></td><td><div class='noteCell'><span class='noteText'>"+esc(r.notes||"—")+"</span><button class='noteEdit' onclick='editNote("+JSON.stringify(r.barcode)+")'>EDIT NOTE</button></div></td><td class='center'>"+esc(r.scanOut)+"</td><td class='center'>"+esc(r.scanOutBy)+"</td><td class='center'>"+esc(r.scanIn||"—")+"</td><td class='center'>"+esc(r.scanInBy||"—")+"</td><td class='center "+(r.status==="IN"?"statusIN":"statusOUT")+"'>"+esc(r.status)+"</td>";rows.appendChild(tr)});let all=Object.values(records),o=all.filter(r=>r.status==="OUT").length,i=all.filter(r=>r.status==="IN").length;totalCount.textContent=all.length;outCount.textContent=o;inCount.textContent=i;outstandingCount.textContent=o;
+if(document.getElementById("printTotal")){
+  printTotal.textContent=all.length;
+  printOut.textContent=o;
+  printIn.textContent=i;
+  printOutstanding.textContent=o;
+}}
+function clearSearch(){search.value="";render()}
+function undoLast(){let h=history.pop();if(!h){message("Nothing to undo.");return}let k=key(h.barcode);if(h.type==="OUT"&&k)delete records[k];else if(k){records[k].scanIn="";records[k].scanInBy="";records[k].status="OUT"}save();render();message("Last scan undone.")}
+function showOutstanding(){document.querySelector("#modal h2").textContent="Outstanding Items";let a=Object.values(records).filter(r=>r.status==="OUT");modalBody.innerHTML=a.length?("<table><tr><th>Barcode</th><th>Notes</th><th>OUT</th><th>By</th></tr>"+a.map(r=>"<tr><td>"+r.barcode+"</td><td>"+(r.notes||"")+"</td><td>"+r.scanOut+"</td><td>"+r.scanOutBy+"</td></tr>").join("")+"</table>"):"<p>No outstanding items.</p>";modal.classList.remove("hidden")}
+function closeModal(){modal.classList.add("hidden")} function completeJob(){if(Object.values(records).some(r=>r.status==="OUT")&&!confirm("Outstanding items remain. Complete anyway?"))return;complete=true;save();message("JOB COMPLETE — scanning locked.")}
+function loadJob(id){
+  if(!jobs[id])return;
+  save();
+  activeJobId=id;
+  localStorage.setItem(ACTIVE_KEY,id);
+  records=jobs[id].records||{};
+  meta=jobs[id].meta||{};
+  history=jobs[id].history||[];
+  complete=!!meta.complete;
+  jobName.value=meta.jobName||"";
+  jobNumber.value=meta.jobNumber||"";
+  bidNumber.value=meta.bidNumber||"";
+  workOrder.value=meta.workOrder||"";
+  scannerName.value=meta.scannerName||"";
+  scannerInName.value=meta.scannerInName||"";
+  renderCheckerOptions(meta.equipmentChecker||"");
+  renderTruckOptions(meta.truckName||"");
+  fileHandle=null;fileName="";
+  render();
+  lastBarcode.textContent="—";lastStatus.textContent="Job opened";
+  closeModal();
+  message("Opened job: "+(meta.jobName||"Untitled Job")+" / "+(meta.jobNumber||"No Job Number"));
+  scan.focus();
+}
+function newJob(){
+  save();
+  let id=makeJobId();
+  jobs[id]={meta:{jobName:"",jobNumber:"",bidNumber:"",workOrder:"",scannerName:"",scannerInName:"",equipmentChecker:"",truckName:"",complete:false},records:{},history:[]};
+  activeJobId=id;records={};history=[];meta={};complete=false;
+  jobName.value="";jobNumber.value="";bidNumber.value="";workOrder.value="";scannerName.value="";scannerInName.value="";renderCheckerOptions("");renderTruckOptions("");
+  fileHandle=null;fileName="";
+  save();render();
+  lastBarcode.textContent="—";lastStatus.textContent="No scans yet";
+  message("New job opened. Your other jobs remain saved.");
+  scan.focus();
+}
+function deleteJob(id){
+  if(id===activeJobId){alert("You cannot delete the job that is currently open. Open another job first.");return}
+  let j=jobs[id];if(!j)return;
+  let name=(j.meta&&j.meta.jobName)||"Untitled Job";
+  if(!confirm("Delete saved job: "+name+"?"))return;
+  delete jobs[id];localStorage.setItem(JOBS_KEY,JSON.stringify(jobs));showJobs();
+}
+function showJobs(){
+  save();
+  let list=Object.entries(jobs);
+  document.querySelector("#modal h2").textContent="Open Jobs ("+list.length+")";
+  modalBody.innerHTML="<div class='jobList'>"+list.map(([id,j])=>{
+    let m=j.meta||{}, rr=j.records||{}, vals=Object.values(rr), outs=vals.filter(r=>r.status==="OUT").length;
+    return "<div class='jobItem "+(id===activeJobId?"activeJob":"")+"'><div><div class='jobItemTitle'>"+esc(m.jobName||"Untitled Job")+"</div><div class='jobItemMeta'>Job #: "+esc(m.jobNumber||"—")+" &nbsp; | &nbsp; Bid #: "+esc(m.bidNumber||"—")+" &nbsp; | &nbsp; WO #: "+esc(m.workOrder||"—")+" &nbsp; | &nbsp; Items: "+vals.length+" &nbsp; | &nbsp; Outstanding: "+outs+" &nbsp; | &nbsp; "+(m.complete?"COMPLETE":"ACTIVE")+"</div></div><div class='jobActions'><button class='openJobBtn' onclick='loadJob("+JSON.stringify(id)+")'>OPEN</button>"+(id!==activeJobId?"<button class='deleteJobBtn' onclick='deleteJob("+JSON.stringify(id)+")'>DELETE</button>":"")+"</div></div>";
+  }).join("")+"</div>";
+  modal.classList.remove("hidden");
+}
+function workbook(){let data=[["Job Name","Job Number","Bid #","Work Order #","Person Scan OUT","Person Scan IN","Equipment Checked By","Truck Name"],[clean(jobName.value),clean(jobNumber.value),clean(bidNumber.value),clean(workOrder.value),clean(scannerName.value),clean(scannerInName.value),clean(equipmentChecker.value),clean(truckName.value)],[],[],["Barcode","Notes","Scan Out Date/Time","Scan Out By","Scan In Date/Time","Scan In By","Status"]];Object.values(records).forEach(r=>data.push([r.barcode,r.notes||"",r.scanOut||"",r.scanOutBy||"",r.scanIn||"",r.scanInBy||"",r.status||""]));let ws=XLSX.utils.aoa_to_sheet(data),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"All Mobile Video");return wb}
+function importWB(wb){let ws=wb.Sheets[wb.SheetNames.find(n=>clean(n).toLowerCase()==="amv-fs-scan")||wb.SheetNames[0]];function ct(a){if(!ws[a])return "";let c=ws[a];return clean(c.v!==undefined?c.v:c.w)}
+let incomingName=ct("A2"),incomingNumber=ct("B2"),incomingBid=ct("C2"),incomingWorkOrder=ct("D2"),incomingScanner=ct("E2"),incomingScannerIn=ct("F2"),incomingChecker=ct("G2"),incomingTruck=ct("H2");
+let existingId=Object.keys(jobs).find(id=>{
+  let m=jobs[id].meta||{};
+  return incomingNumber && clean(m.jobNumber).toLowerCase()===incomingNumber.toLowerCase();
+});
+if(existingId && existingId!==activeJobId){loadJob(existingId)}
+else if((clean(jobNumber.value)||clean(jobName.value)) && ((incomingNumber&&incomingNumber!==clean(jobNumber.value))||(incomingName&&incomingName!==clean(jobName.value)))){
+  save();let id=makeJobId();jobs[id]={meta:{jobName:incomingName,jobNumber:incomingNumber,bidNumber:incomingBid,workOrder:incomingWorkOrder,scannerName:incomingScanner,scannerInName:incomingScannerIn,equipmentChecker:incomingChecker,truckName:incomingTruck,complete:false},records:{},history:[]};activeJobId=id;records={};history=[];complete=false;
+}
+jobName.value=incomingName;jobNumber.value=incomingNumber;bidNumber.value=incomingBid;workOrder.value=incomingWorkOrder;scannerName.value=incomingScanner;scannerInName.value=incomingScannerIn;if(incomingChecker&&!checkerNames.some(n=>n.toLowerCase()===incomingChecker.toLowerCase())){checkerNames.push(incomingChecker);localStorage.setItem(CHECKERS_KEY,JSON.stringify(checkerNames))}renderCheckerOptions(incomingChecker);if(incomingTruck&&!truckNames.some(n=>n.toLowerCase()===incomingTruck.toLowerCase())){truckNames.push(incomingTruck);localStorage.setItem(TRUCKS_KEY,JSON.stringify(truckNames))}renderTruckOptions(incomingTruck);let g=XLSX.utils.sheet_to_json(ws,{header:1,defval:"",raw:false}),added=0,updated=0;for(let x=5;x<g.length;x++){let r=g[x]||[],b=clean(r[0]);if(!b)continue;let k=key(b),obj={barcode:b,notes:clean(r[1]),scanOut:clean(r[2]),scanOutBy:clean(r[3]),scanIn:clean(r[4]),scanInBy:clean(r[5]),status:clean(r[6]).toUpperCase()||"OUT"};if(obj.scanIn)obj.status="IN";if(k){records[k]=Object.assign(records[k],obj);updated++}else{records[b]=obj;added++}}save();render();return {added,updated}}
+importFile.addEventListener("change",async e=>{let f=e.target.files[0];if(!f)return;try{let r=importWB(XLSX.read(await f.arrayBuffer(),{type:"array",cellDates:true}));message("Imported "+r.added+" new, "+r.updated+" updated.")}catch(err){message("IMPORT ERROR — "+err.message)}e.target.value=""});
+function exportExcel(){XLSX.writeFile(workbook(),"All Mobile Video-"+(clean(jobNumber.value)||"Job")+".xlsx");message("Excel exported.")}
+async function openExisting(){if(!window.showOpenFilePicker){message("Direct open/save requires current Chrome or Edge.");return}try{let [h]=await showOpenFilePicker({types:[{description:"Excel Workbook",accept:{"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":[".xlsx"]}}]});fileHandle=h;fileName=h.name;let r=importWB(XLSX.read(await (await h.getFile()).arrayBuffer(),{type:"array",cellDates:true}));message("Opened "+fileName+". "+r.added+" added, "+r.updated+" updated.")}catch(e){if(e.name!=="AbortError")message("OPEN ERROR — "+e.message)}}
+async function saveExisting(){if(!fileHandle){message("No Excel file is open. Use OPEN EXISTING EXCEL first.");return}try{let p=await fileHandle.queryPermission({mode:"readwrite"});if(p!=="granted")p=await fileHandle.requestPermission({mode:"readwrite"});if(p!=="granted"){message("Write permission denied.");return}let w=await fileHandle.createWritable();await w.write(XLSX.write(workbook(),{bookType:"xlsx",type:"array"}));await w.close();message("Saved back to SAME file: "+fileName)}catch(e){message("SAVE ERROR — "+e.message)}}
+async function saveAs(){if(!window.showSaveFilePicker){exportExcel();return}try{let h=await showSaveFilePicker({suggestedName:"All Mobile Video-"+(clean(jobNumber.value)||"Job")+".xlsx",types:[{description:"Excel Workbook",accept:{"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":[".xlsx"]}}]});fileHandle=h;fileName=h.name;let w=await h.createWritable();await w.write(XLSX.write(workbook(),{bookType:"xlsx",type:"array"}));await w.close();message("Saved as "+fileName+". Future SAVE EXCEL updates this same file.")}catch(e){if(e.name!=="AbortError")message("SAVE AS ERROR — "+e.message)}}
+function printJob(){
+  save();
+  render();
+  window.print();
+}
+function exportCSV(){let d=[["Barcode","Notes","Scan Out","By","Scan In","By","Status"]];Object.values(records).forEach(r=>d.push([r.barcode,r.notes||"",r.scanOut,r.scanOutBy,r.scanIn||"",r.scanInBy||"",r.status]));let csv=d.map(a=>a.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="All Mobile Video-"+(clean(jobNumber.value)||"Job")+".csv";a.click()}
+function exportPDF(){let w=window.open("","_blank"),tr=Object.values(records).map(r=>"<tr><td>"+r.barcode+"</td><td>"+(r.notes||"")+"</td><td>"+r.scanOut+"</td><td>"+r.scanOutBy+"</td><td>"+(r.scanIn||"")+"</td><td>"+(r.scanInBy||"")+"</td><td>"+r.status+"</td></tr>").join("");w.document.write("<html><body><h1>All Mobile Video</h1><p>Job: "+jobName.value+" | Job #: "+jobNumber.value+" | Bid #: "+bidNumber.value+" | Work Order #: "+workOrder.value+" | Scanning OUT: "+scannerName.value+" | Scanning IN: "+scannerInName.value+" | Equipment Checked By: "+equipmentChecker.value+" | Truck: "+truckName.value+"</p><table border=1><tr><th>Barcode</th><th>Notes</th><th>OUT</th><th>By</th><th>IN</th><th>By</th><th>Status</th></tr>"+tr+"</table></body></html>");w.document.close();setTimeout(()=>w.print(),300)}
+
+render();setMode("OUT");scan.focus();
+
+</script>
+</body></html>
