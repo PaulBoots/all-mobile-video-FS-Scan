@@ -240,6 +240,8 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
   }
 }
 
+@media(max-width:700px){#cameraModal .modalcard{width:100vw;height:100vh;max-height:none;border-radius:0}}
+#cameraReader{width:100%;min-height:320px;background:#000;border-radius:8px;overflow:hidden}
 </style>
 </head>
 <body>
@@ -262,6 +264,7 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
 <button class="tool" onclick="completeJob()">⚑ COMPLETE JOB</button>
 <button class="tool" onclick="undoLast()">↶ UNDO LAST SCAN</button>
 <button class="tool" onclick="showOutstanding()">📋 OUTSTANDING ITEMS</button>
+<button class="tool" onclick="openCameraScanner()">📷 CAMERA SCAN</button>
 <button class="tool" onclick="printJob()">🖨 PRINT JOB</button>
 <button class="tool" onclick="showJobs()">▣ OPEN JOBS</button>
 <button class="tool" onclick="newJob()">⊕ NEW JOB</button>
@@ -316,11 +319,19 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
 <div id="msg" class="msg">Ready. Current mode: SCAN OUT.</div>
 </main>
 
-<footer><span>All Mobile Video v41</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>All changes are saved automatically ✓</span></footer>
+<footer><span>All Mobile Video v42</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>All changes are saved automatically ✓</span></footer>
 </div>
 
 <div id="modal" class="modal hidden"><div class="modalcard"><button onclick="closeModal()" style="float:right">CLOSE</button><h2>Outstanding Items</h2><div id="modalBody"></div></div></div>
 
+<div id="cameraModal" class="modal hidden">
+<div class="modalcard">
+<button class="modalClose" onclick="closeCameraScanner()">CLOSE</button>
+<h2>CAMERA BARCODE SCAN — <span id="cameraModeLabel">SCAN OUT</span></h2>
+<div id="cameraReader"></div>
+<p style="text-align:center">Point the rear camera at the barcode.</p>
+</div></div>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 const JOBS_KEY="allmobilevideo_v28_jobs", ACTIVE_KEY="allmobilevideo_v28_active", CHECKERS_KEY="allmobilevideo_v36_checkers", TRUCKS_KEY="allmobilevideo_v37_trucks";
@@ -510,6 +521,46 @@ function printJob(){
 function exportCSV(){let d=[["Barcode","Notes","Scan Out","By","Scan In","By","Status"]];Object.values(records).forEach(r=>d.push([r.barcode,r.notes||"",r.scanOut,r.scanOutBy,r.scanIn||"",r.scanInBy||"",r.status]));let csv=d.map(a=>a.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="All Mobile Video-"+(clean(jobNumber.value)||"Job")+".csv";a.click()}
 function exportPDF(){let w=window.open("","_blank"),tr=Object.values(records).map(r=>"<tr><td>"+r.barcode+"</td><td>"+(r.notes||"")+"</td><td>"+r.scanOut+"</td><td>"+r.scanOutBy+"</td><td>"+(r.scanIn||"")+"</td><td>"+(r.scanInBy||"")+"</td><td>"+r.status+"</td></tr>").join("");w.document.write("<html><body><h1>All Mobile Video</h1><p>Job: "+jobName.value+" | Job #: "+jobNumber.value+" | Bid #: "+bidNumber.value+" | Work Order #: "+workOrder.value+" | Scanning OUT: "+scannerName.value+" | Scanning IN: "+scannerInName.value+" | Equipment Checked By: "+equipmentChecker.value+" | Truck: "+truckName.value+"</p><table border=1><tr><th>Barcode</th><th>Notes</th><th>OUT</th><th>By</th><th>IN</th><th>By</th><th>Status</th></tr>"+tr+"</table></body></html>");w.document.close();setTimeout(()=>w.print(),300)}
 
+
+let cameraScanner=null,cameraBusy=false;
+async function openCameraScanner(){
+  if(location.protocol!=="https:"&&location.hostname!=="localhost"){
+    rejectedSound();message("Camera scanning requires HTTPS. Use the GitHub Pages version.");return;
+  }
+  if(typeof Html5Qrcode==="undefined"){
+    rejectedSound();message("Camera scanner library did not load. Reload the page with internet access.");return;
+  }
+  cameraModeLabel.textContent="SCAN "+mode;
+  cameraModal.classList.remove("hidden");
+  cameraBusy=false;
+  try{
+    cameraScanner=new Html5Qrcode("cameraReader");
+    await cameraScanner.start(
+      {facingMode:"environment"},
+      {fps:10,qrbox:{width:300,height:160}},
+      async decoded=>{
+        if(cameraBusy)return;
+        cameraBusy=true;
+        scan.value=clean(decoded);
+        await closeCameraScanner();
+        process();
+        setTimeout(()=>cameraBusy=false,600);
+      },
+      ()=>{}
+    );
+  }catch(e){
+    cameraModal.classList.add("hidden");
+    rejectedSound();message("CAMERA ERROR — "+e.message);
+  }
+}
+async function closeCameraScanner(){
+  if(cameraScanner){
+    try{await cameraScanner.stop()}catch(e){}
+    try{await cameraScanner.clear()}catch(e){}
+    cameraScanner=null;
+  }
+  cameraModal.classList.add("hidden");
+}
 render();setMode("OUT");scan.focus();
 
 </script>
