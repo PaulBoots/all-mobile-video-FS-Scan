@@ -240,8 +240,183 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
   }
 }
 
-@media(max-width:700px){#cameraModal .modalcard{width:100vw;height:100vh;max-height:none;border-radius:0}}
-#cameraReader{width:100%;min-height:320px;background:#000;border-radius:8px;overflow:hidden}
+
+
+@media(max-width:700px){
+  body{font-size:18px}
+  .app{
+    display:block!important;
+    min-height:100vh!important;
+  }
+  header{
+    display:block!important;
+    padding:0!important;
+  }
+  .logo{
+    height:92px!important;
+    padding:8px!important;
+  }
+  .logo img{
+    max-height:78px!important;
+  }
+  .headtitle{
+    padding:10px 12px!important;
+  }
+  .headtitle h1{
+    font-size:30px!important;
+    text-align:center!important;
+  }
+  .headtitle div{
+    font-size:15px!important;
+    text-align:center!important;
+  }
+  .clock{
+    padding:8px 12px 12px!important;
+  }
+  .clocktop{
+    font-size:16px!important;
+  }
+  .sidebar{
+    width:100%!important;
+    border-right:0!important;
+    border-bottom:1px solid #ccc!important;
+    padding:14px!important;
+  }
+  .mode{
+    font-size:26px!important;
+    padding:20px!important;
+    min-height:82px!important;
+  }
+  .tools{
+    grid-template-columns:1fr 1fr!important;
+    gap:10px!important;
+  }
+  .tool{
+    min-height:66px!important;
+    font-size:16px!important;
+    padding:14px!important;
+  }
+  .summary{
+    margin-top:14px!important;
+  }
+  .sumrow{
+    padding:16px!important;
+    font-size:17px!important;
+  }
+  .sumrow b{
+    font-size:30px!important;
+  }
+  .main{
+    width:100%!important;
+    padding:12px!important;
+    overflow:visible!important;
+  }
+  .jobinfo{
+    display:block!important;
+    margin-bottom:14px!important;
+  }
+  .jobbox{
+    border-right:0!important;
+    border-bottom:1px solid #ddd!important;
+    padding:14px 16px!important;
+  }
+  .jobbox:last-child{
+    border-bottom:0!important;
+  }
+  .jobbox label{
+    font-size:14px!important;
+    margin-bottom:8px!important;
+  }
+  .jobbox input,
+  .jobbox select{
+    font-size:22px!important;
+    min-height:46px!important;
+    padding:8px!important;
+    border:1px solid #bbb!important;
+    border-radius:5px!important;
+    background:white!important;
+  }
+  .checkerAdd{
+    display:grid!important;
+    grid-template-columns:1fr auto!important;
+    gap:8px!important;
+    margin-top:8px!important;
+  }
+  .checkerAdd input{
+    font-size:18px!important;
+    min-height:44px!important;
+  }
+  .checkerAdd button{
+    font-size:15px!important;
+    min-height:44px!important;
+    padding:8px 12px!important;
+  }
+  .histhead{
+    display:block!important;
+    padding:12px!important;
+  }
+  .histhead h2{
+    font-size:22px!important;
+    margin-bottom:10px!important;
+  }
+  .search{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+  }
+  .search input{
+    width:100%!important;
+    font-size:18px!important;
+    padding:12px!important;
+  }
+  .search button{
+    min-height:44px!important;
+    font-size:15px!important;
+  }
+  .tablewrap{
+    max-height:420px!important;
+    overflow:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  table{
+    min-width:1050px!important;
+  }
+  th,td{
+    font-size:14px!important;
+    padding:10px!important;
+  }
+  .bottom{
+    display:block!important;
+    padding:14px!important;
+  }
+  .bottom>div{
+    margin-bottom:14px!important;
+  }
+  .bottom label{
+    font-size:15px!important;
+  }
+  .last{
+    font-size:28px!important;
+  }
+  .scaninput{
+    font-size:26px!important;
+    min-height:64px!important;
+    padding:14px!important;
+  }
+  .notes{
+    height:110px!important;
+    font-size:18px!important;
+    padding:12px!important;
+  }
+  .msg{
+    font-size:16px!important;
+    padding:12px!important;
+  }
+  footer{
+    display:none!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -264,7 +439,6 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
 <button class="tool" onclick="completeJob()">⚑ COMPLETE JOB</button>
 <button class="tool" onclick="undoLast()">↶ UNDO LAST SCAN</button>
 <button class="tool" onclick="showOutstanding()">📋 OUTSTANDING ITEMS</button>
-<button class="tool" onclick="openCameraScanner()">📷 CAMERA SCAN</button>
 <button class="tool" onclick="printJob()">🖨 PRINT JOB</button>
 <button class="tool" onclick="showJobs()">▣ OPEN JOBS</button>
 <button class="tool" onclick="newJob()">⊕ NEW JOB</button>
@@ -319,19 +493,11 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
 <div id="msg" class="msg">Ready. Current mode: SCAN OUT.</div>
 </main>
 
-<footer><span>All Mobile Video v42</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>All changes are saved automatically ✓</span></footer>
+<footer><span>All Mobile Video v43</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>All changes are saved automatically ✓</span></footer>
 </div>
 
 <div id="modal" class="modal hidden"><div class="modalcard"><button onclick="closeModal()" style="float:right">CLOSE</button><h2>Outstanding Items</h2><div id="modalBody"></div></div></div>
 
-<div id="cameraModal" class="modal hidden">
-<div class="modalcard">
-<button class="modalClose" onclick="closeCameraScanner()">CLOSE</button>
-<h2>CAMERA BARCODE SCAN — <span id="cameraModeLabel">SCAN OUT</span></h2>
-<div id="cameraReader"></div>
-<p style="text-align:center">Point the rear camera at the barcode.</p>
-</div></div>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 const JOBS_KEY="allmobilevideo_v28_jobs", ACTIVE_KEY="allmobilevideo_v28_active", CHECKERS_KEY="allmobilevideo_v36_checkers", TRUCKS_KEY="allmobilevideo_v37_trucks";
@@ -522,45 +688,7 @@ function exportCSV(){let d=[["Barcode","Notes","Scan Out","By","Scan In","By","S
 function exportPDF(){let w=window.open("","_blank"),tr=Object.values(records).map(r=>"<tr><td>"+r.barcode+"</td><td>"+(r.notes||"")+"</td><td>"+r.scanOut+"</td><td>"+r.scanOutBy+"</td><td>"+(r.scanIn||"")+"</td><td>"+(r.scanInBy||"")+"</td><td>"+r.status+"</td></tr>").join("");w.document.write("<html><body><h1>All Mobile Video</h1><p>Job: "+jobName.value+" | Job #: "+jobNumber.value+" | Bid #: "+bidNumber.value+" | Work Order #: "+workOrder.value+" | Scanning OUT: "+scannerName.value+" | Scanning IN: "+scannerInName.value+" | Equipment Checked By: "+equipmentChecker.value+" | Truck: "+truckName.value+"</p><table border=1><tr><th>Barcode</th><th>Notes</th><th>OUT</th><th>By</th><th>IN</th><th>By</th><th>Status</th></tr>"+tr+"</table></body></html>");w.document.close();setTimeout(()=>w.print(),300)}
 
 
-let cameraScanner=null,cameraBusy=false;
-async function openCameraScanner(){
-  if(location.protocol!=="https:"&&location.hostname!=="localhost"){
-    rejectedSound();message("Camera scanning requires HTTPS. Use the GitHub Pages version.");return;
-  }
-  if(typeof Html5Qrcode==="undefined"){
-    rejectedSound();message("Camera scanner library did not load. Reload the page with internet access.");return;
-  }
-  cameraModeLabel.textContent="SCAN "+mode;
-  cameraModal.classList.remove("hidden");
-  cameraBusy=false;
-  try{
-    cameraScanner=new Html5Qrcode("cameraReader");
-    await cameraScanner.start(
-      {facingMode:"environment"},
-      {fps:10,qrbox:{width:300,height:160}},
-      async decoded=>{
-        if(cameraBusy)return;
-        cameraBusy=true;
-        scan.value=clean(decoded);
-        await closeCameraScanner();
-        process();
-        setTimeout(()=>cameraBusy=false,600);
-      },
-      ()=>{}
-    );
-  }catch(e){
-    cameraModal.classList.add("hidden");
-    rejectedSound();message("CAMERA ERROR — "+e.message);
-  }
-}
-async function closeCameraScanner(){
-  if(cameraScanner){
-    try{await cameraScanner.stop()}catch(e){}
-    try{await cameraScanner.clear()}catch(e){}
-    cameraScanner=null;
-  }
-  cameraModal.classList.add("hidden");
-}
+
 render();setMode("OUT");scan.focus();
 
 </script>
