@@ -417,6 +417,44 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
   }
 }
 
+
+.pdfEditorTable{width:100%;border-collapse:collapse;margin-top:10px}
+.pdfEditorTable th,.pdfEditorTable td{border:1px solid #ccc;padding:6px}
+.pdfEditorTable th{background:#0753bb;color:#fff}
+.pdfEditorTable input,.pdfEditorTable textarea{width:100%;padding:6px}
+.pdfEditorTable textarea{min-height:52px}
+.pdfToolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.pdfToolbar button{padding:9px 12px;border:0;border-radius:5px;font-weight:700;cursor:pointer}
+
+.deleteScanBtn{background:#d71920;color:white;border:0;border-radius:5px;padding:7px 10px;font-weight:800;cursor:pointer}
+@media(max-width:700px){.deleteScanBtn{min-height:42px;padding:9px 12px;font-size:14px}}
+
+.oneDriveCard{margin:14px 0;background:#eef5ff;border:1px solid #9bbbe7;border-radius:8px;padding:12px}
+.oneDriveCard h4{margin:0 0 6px;font-size:16px;color:#063b82}
+.oneDriveFixed{font-size:12px;color:#444;margin-bottom:9px}
+.oneDriveButtons{display:grid;grid-template-columns:1fr;gap:7px}
+.oneDriveButtons button{min-height:40px;border:0;border-radius:5px;background:#0753bb;color:white;font-weight:800;cursor:pointer;padding:8px}
+.oneDriveButtons .odConnect{background:#087f2f}
+.oneDriveAuto{margin-top:9px;font-size:13px;font-weight:700}
+.oneDriveAuto input{transform:scale(1.2);margin-right:7px}
+.oneDriveStatus{margin-top:9px;border-radius:5px;padding:8px 9px;font-weight:900;font-size:12px;text-align:center}
+.oneDriveStatus.disconnected{background:#e8e8e8;color:#333}
+.oneDriveStatus.connecting,.oneDriveStatus.saving{background:#fff1bd;color:#6b4b00}
+.oneDriveStatus.connected,.oneDriveStatus.saved{background:#d9f5df;color:#075b20}
+.oneDriveStatus.error{background:#ffd9d9;color:#9b111e}
+.oneDriveFile{font-size:11px;color:#333;margin-top:7px;overflow-wrap:anywhere}
+@media(max-width:700px){
+  .oneDriveCard{padding:14px}
+  .oneDriveCard h4{font-size:20px}
+  .oneDriveFixed{font-size:14px}
+  .oneDriveButtons{grid-template-columns:1fr 1fr}
+  .oneDriveButtons button{min-height:54px;font-size:15px}
+  .oneDriveButtons button:first-child{grid-column:1 / -1}
+  .oneDriveAuto{font-size:16px;padding:8px 0}
+  .oneDriveStatus{font-size:15px;padding:11px}
+  .oneDriveFile{font-size:13px}
+}
+
 </style>
 </head>
 <body>
@@ -439,11 +477,31 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
 <button class="tool" onclick="completeJob()">⚑ COMPLETE JOB</button>
 <button class="tool" onclick="undoLast()">↶ UNDO LAST SCAN</button>
 <button class="tool" onclick="showOutstanding()">📋 OUTSTANDING ITEMS</button>
+<button class="tool" onclick="document.getElementById('pdfImportFile').click()">📄 IMPORT PDF</button>
+<button class="tool" onclick="openPdfEditor()">✏ EDIT PDF DATA</button>
+<button class="tool" onclick="exportPdfDataExcel()">📊 PDF TO EXCEL</button>
 <button class="tool" onclick="printJob()">🖨 PRINT JOB</button>
 <button class="tool" onclick="showJobs()">▣ OPEN JOBS</button>
 <button class="tool" onclick="newJob()">⊕ NEW JOB</button>
 </div>
 <input id="importFile" type="file" accept=".xlsx,.xls,.csv" style="display:none">
+<input id="pdfImportFile" type="file" accept=".pdf,application/pdf" style="display:none">
+
+
+<div class="oneDriveCard">
+  <h4>☁ ONEDRIVE — JOBS</h4>
+  <div class="oneDriveFixed">Automatic Excel backup to the AMV JOBS folder</div>
+  <div class="oneDriveButtons">
+    <button class="odConnect" onclick="connectOneDrive()">CONNECT ONEDRIVE</button>
+    <button onclick="loadOneDriveJobs()">LOAD ONEDRIVE JOB</button>
+    <button onclick="cloudSaveNow()">SAVE NOW</button>
+  </div>
+  <div class="oneDriveAuto">
+    <label><input id="oneDriveAutoSave" type="checkbox" checked> AUTO UPDATE EXCEL</label>
+  </div>
+  <div id="oneDriveStatus" class="oneDriveStatus disconnected">NOT CONNECTED</div>
+  <div id="oneDriveFile" class="oneDriveFile">No cloud file selected yet.</div>
+</div>
 
 <div class="summary"><h3>SUMMARY</h3>
 <div class="sumrow"><span>TOTAL ITEMS</span><b id="totalCount">0</b></div>
@@ -482,7 +540,7 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
 
 <div class="history">
 <div class="histhead"><h2>SCAN HISTORY</h2><div class="search"><input id="search" placeholder="Search barcode..." oninput="render()"><button onclick="clearSearch()">CLEAR SEARCH</button></div></div>
-<div class="tablewrap"><table><thead><tr><th>#</th><th>BARCODE</th><th>DESCRIPTION / NOTES</th><th>SCAN OUT DATE / TIME</th><th>BY</th><th>SCAN IN DATE / TIME</th><th>BY</th><th>STATUS</th></tr></thead><tbody id="rows"></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>#</th><th>BARCODE</th><th>DESCRIPTION / NOTES</th><th>SCAN OUT DATE / TIME</th><th>BY</th><th>SCAN IN DATE / TIME</th><th>BY</th><th>STATUS</th><th>DELETE</th></tr></thead><tbody id="rows"></tbody></table></div>
 </div>
 
 <div class="bottom">
@@ -493,13 +551,303 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
 <div id="msg" class="msg">Ready. Current mode: SCAN OUT.</div>
 </main>
 
-<footer><span>All Mobile Video v43</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>All changes are saved automatically ✓</span></footer>
+<footer><span>All Mobile Video v46</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + OneDrive Excel autosave when connected ✓</span></footer>
 </div>
 
 <div id="modal" class="modal hidden"><div class="modalcard"><button onclick="closeModal()" style="float:right">CLOSE</button><h2>Outstanding Items</h2><div id="modalBody"></div></div></div>
 
+<script type="module">
+import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
+pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+window.pdfjsLib=pdfjsLib;
+</script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
+
+const MS_CLIENT_ID='fb3d7e2e-4a4a-48e0-af82-824c614ace4c';
+const MS_REDIRECT_URI='https://paulboots.github.io/all-mobile-video-FS-Scan/';
+const ONEDRIVE_FOLDER_URL='https://amvchelsea-my.sharepoint.com/:f:/p/ltran/IgCRFaFV4bEgRZJpobmllAEUAZ1Z4GmEPO82UUKk00x1Kgg?e=8muboy';
+const MS_SCOPE="openid profile offline_access User.Read Files.ReadWrite";
+const MS_TOKEN_KEY="allmobilevideo_v46_ms_tokens";
+const MS_PKCE_KEY="allmobilevideo_v46_ms_pkce";
+const OD_AUTOSAVE_KEY="allmobilevideo_v46_od_autosave";
+
+let graphToken="";
+let oneDriveFolder=null;
+let cloudSaveTimer=null;
+let cloudSaving=false;
+let cloudSavePending=false;
+let cloudSuspend=false;
+let currentCloudItemId="";
+let currentCloudFileName="";
+
+function odStatus(text,state="disconnected"){
+  const el=document.getElementById("oneDriveStatus");
+  if(!el)return;
+  el.textContent=text;
+  el.className="oneDriveStatus "+state;
+}
+function odFile(text){
+  const el=document.getElementById("oneDriveFile");
+  if(el)el.textContent=text||"";
+}
+function cloudAutoEnabled(){
+  const e=document.getElementById("oneDriveAutoSave");
+  return !!(e&&e.checked);
+}
+function base64UrlBytes(bytes){
+  let x="";bytes.forEach(b=>x+=String.fromCharCode(b));
+  return btoa(x).replace(/=/g,"").replace(/\+/g,"-").replace(/\//g,"_");
+}
+function base64UrlEncode(text){
+  const bytes=new TextEncoder().encode(text);
+  return base64UrlBytes(bytes);
+}
+function randomUrlString(bytes=48){
+  const a=new Uint8Array(bytes);crypto.getRandomValues(a);return base64UrlBytes(a);
+}
+async function sha256Url(text){
+  const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(text));
+  return base64UrlBytes(new Uint8Array(d));
+}
+function getStoredTokens(){
+  try{return JSON.parse(localStorage.getItem(MS_TOKEN_KEY)||"null")}catch(e){return null}
+}
+function storeTokens(data){
+  const old=getStoredTokens()||{};
+  const expiresIn=Number(data.expires_in||3600);
+  const obj={
+    access_token:data.access_token||old.access_token||"",
+    refresh_token:data.refresh_token||old.refresh_token||"",
+    expires_at:Date.now()+Math.max(60,expiresIn-120)*1000
+  };
+  localStorage.setItem(MS_TOKEN_KEY,JSON.stringify(obj));
+  graphToken=obj.access_token;
+}
+async function tokenRequest(params){
+  const r=await fetch("https://login.microsoftonline.com/organizations/oauth2/v2.0/token",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:new URLSearchParams(params).toString()
+  });
+  let data={};
+  try{data=await r.json()}catch(e){}
+  if(!r.ok)throw new Error((data.error_description||data.error||("Microsoft sign-in error "+r.status)).replace(/\r?\n/g," "));
+  storeTokens(data);return data;
+}
+async function connectOneDrive(){
+  try{
+    if(location.protocol!=="https:")throw new Error("Open the GitHub Pages HTTPS version of the app.");
+    if(!crypto||!crypto.subtle)throw new Error("Secure Microsoft sign-in is not supported in this browser.");
+    const verifier=randomUrlString();
+    const challenge=await sha256Url(verifier);
+    const state=randomUrlString(24);
+    localStorage.setItem(MS_PKCE_KEY,JSON.stringify({verifier,state}));
+    const q=new URLSearchParams({
+      client_id:MS_CLIENT_ID,
+      response_type:"code",
+      redirect_uri:MS_REDIRECT_URI,
+      response_mode:"query",
+      scope:MS_SCOPE,
+      state,
+      code_challenge:challenge,
+      code_challenge_method:"S256",
+      prompt:"select_account"
+    });
+    odStatus("OPENING MICROSOFT SIGN-IN…","connecting");
+    location.assign("https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?"+q.toString());
+  }catch(e){odStatus("CONNECT ERROR — "+e.message,"error")}
+}
+async function handleMicrosoftCallback(){
+  const q=new URLSearchParams(location.search);
+  const err=q.get("error"),code=q.get("code");
+  if(err){
+    odStatus("CONNECT ERROR — "+(q.get("error_description")||err),"error");
+    history.replaceState({},document.title,location.pathname);
+    return;
+  }
+  if(!code)return false;
+  try{
+    const saved=JSON.parse(localStorage.getItem(MS_PKCE_KEY)||"null");
+    if(!saved)throw new Error("Microsoft sign-in session was not found.");
+    if(q.get("state")!==saved.state)throw new Error("Microsoft sign-in security check failed.");
+    await tokenRequest({
+      client_id:MS_CLIENT_ID,
+      grant_type:"authorization_code",
+      code,
+      redirect_uri:MS_REDIRECT_URI,
+      code_verifier:saved.verifier,
+      scope:MS_SCOPE
+    });
+    localStorage.removeItem(MS_PKCE_KEY);
+    history.replaceState({},document.title,location.pathname);
+    await resolveOneDriveFolder();
+    odStatus("CONNECTED — AUTOSAVE READY","connected");
+    odFile("AMV JOBS folder connected.");
+    scheduleCloudSave(800);
+    return true;
+  }catch(e){
+    history.replaceState({},document.title,location.pathname);
+    odStatus("CONNECT ERROR — "+e.message,"error");
+    return false;
+  }
+}
+async function getGraphToken(){
+  const t=getStoredTokens();
+  if(t&&t.access_token&&Date.now()<Number(t.expires_at||0))return t.access_token;
+  if(t&&t.refresh_token){
+    const d=await tokenRequest({
+      client_id:MS_CLIENT_ID,
+      grant_type:"refresh_token",
+      refresh_token:t.refresh_token,
+      scope:MS_SCOPE
+    });
+    return d.access_token;
+  }
+  throw new Error("Not connected. Click CONNECT ONEDRIVE.");
+}
+async function graphFetch(url,options={}){
+  const token=await getGraphToken();
+  const headers=Object.assign({},options.headers||{},{Authorization:"Bearer "+token});
+  const r=await fetch(url,Object.assign({},options,{headers}));
+  if(!r.ok){
+    let detail="";
+    try{
+      const j=await r.json();
+      detail=(j.error&&j.error.message)||JSON.stringify(j);
+    }catch(e){try{detail=await r.text()}catch(_e){}}
+    throw new Error("Microsoft Graph "+r.status+(detail?" — "+detail.slice(0,240):""));
+  }
+  return r;
+}
+async function resolveOneDriveFolder(){
+  const shareId="u!"+base64UrlEncode(ONEDRIVE_FOLDER_URL);
+  const r=await graphFetch("https://graph.microsoft.com/v1.0/shares/"+shareId+"/driveItem?$select=id,name,parentReference,remoteItem");
+  const item=await r.json();
+  const x=item.remoteItem||item;
+  const driveId=(x.parentReference&&x.parentReference.driveId)||(item.parentReference&&item.parentReference.driveId);
+  const itemId=x.id||item.id;
+  if(!driveId||!itemId)throw new Error("Could not resolve the AMV JOBS folder.");
+  oneDriveFolder={driveId,itemId,name:x.name||item.name||"JOBS"};
+  return oneDriveFolder;
+}
+async function ensureOneDriveFolder(){
+  if(oneDriveFolder)return oneDriveFolder;
+  return await resolveOneDriveFolder();
+}
+function safeCloudName(){
+  const jn=clean(jobNumber.value)||clean(jobName.value)||"Job";
+  return ("All-Mobile-Video-"+jn+".xlsx").replace(/[\\/:*?"<>|]/g,"-");
+}
+function workbookBytes(){
+  return XLSX.write(workbook(),{bookType:"xlsx",type:"array"});
+}
+function scheduleCloudSave(delay=2200){
+  if(cloudSuspend||!cloudAutoEnabled())return;
+  const t=getStoredTokens();
+  if(!t||(!t.access_token&&!t.refresh_token))return;
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer=setTimeout(()=>cloudSaveNow(true),delay);
+}
+async function cloudSaveNow(silent=false){
+  if(cloudSuspend)return;
+  if(cloudSaving){cloudSavePending=true;return}
+  if(!clean(jobName.value)||!clean(jobNumber.value)){
+    if(!silent)odStatus("ENTER JOB NAME + JOB NUMBER FIRST","error");
+    return;
+  }
+  cloudSaving=true;cloudSavePending=false;
+  try{
+    const f=await ensureOneDriveFolder();
+    const filename=safeCloudName();
+    odStatus("SAVING EXCEL…","saving");
+    odFile(filename);
+    const bytes=workbookBytes();
+    const url="https://graph.microsoft.com/v1.0/drives/"+encodeURIComponent(f.driveId)+"/items/"+encodeURIComponent(f.itemId)+":/"+encodeURIComponent(filename)+":/content";
+    const r=await graphFetch(url,{
+      method:"PUT",
+      headers:{"Content-Type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
+      body:bytes
+    });
+    const saved=await r.json();
+    currentCloudItemId=saved.id||"";
+    currentCloudFileName=saved.name||filename;
+    odStatus("SAVED ✓","saved");
+    odFile(currentCloudFileName+" — "+new Date().toLocaleTimeString());
+    if(!silent)message("OneDrive Excel updated: "+currentCloudFileName);
+  }catch(e){
+    odStatus("SAVE ERROR","error");
+    odFile(e.message);
+    if(!silent)message("ONEDRIVE SAVE ERROR — "+e.message);
+  }finally{
+    cloudSaving=false;
+    if(cloudSavePending){cloudSavePending=false;scheduleCloudSave(500)}
+  }
+}
+async function loadOneDriveJobs(){
+  try{
+    const f=await ensureOneDriveFolder();
+    odStatus("LOADING JOB LIST…","connecting");
+    let url="https://graph.microsoft.com/v1.0/drives/"+encodeURIComponent(f.driveId)+"/items/"+encodeURIComponent(f.itemId)+"/children?$select=id,name,file,lastModifiedDateTime,size&$top=200";
+    let files=[];
+    while(url){
+      const r=await graphFetch(url),d=await r.json();
+      files.push(...(d.value||[]).filter(x=>x.file&&/\.xlsx$/i.test(x.name)));
+      url=d["@odata.nextLink"]||"";
+    }
+    files.sort((a,b)=>new Date(b.lastModifiedDateTime)-new Date(a.lastModifiedDateTime));
+    document.querySelector("#modal h2").textContent="OneDrive — JOBS ("+files.length+")";
+    modalBody.innerHTML=files.length?(
+      "<div class='jobList'>"+files.map(x=>
+        "<div class='jobItem'><div><div class='jobItemTitle'>"+esc(x.name)+"</div>"+
+        "<div class='jobItemMeta'>Updated: "+esc(new Date(x.lastModifiedDateTime).toLocaleString())+" &nbsp; | &nbsp; "+Math.max(1,Math.round((x.size||0)/1024))+" KB</div></div>"+
+        "<div class='jobActions'><button class='openJobBtn' onclick='openOneDriveFile("+JSON.stringify(x.id)+","+JSON.stringify(x.name)+")'>OPEN</button></div></div>"
+      ).join("")+"</div>"
+    ):"<p>No Excel job files were found in the JOBS folder.</p>";
+    modal.classList.remove("hidden");
+    odStatus("CONNECTED — "+files.length+" FILE(S)","connected");
+  }catch(e){odStatus("LOAD ERROR","error");odFile(e.message);message("ONEDRIVE LOAD ERROR — "+e.message)}
+}
+async function openOneDriveFile(itemId,name){
+  try{
+    const f=await ensureOneDriveFolder();
+    cloudSuspend=true;
+    odStatus("OPENING "+name+"…","connecting");
+    const r=await graphFetch("https://graph.microsoft.com/v1.0/drives/"+encodeURIComponent(f.driveId)+"/items/"+encodeURIComponent(itemId)+"/content");
+    const wb=XLSX.read(await r.arrayBuffer(),{type:"array",cellDates:true});
+    const result=importWB(wb);
+    currentCloudItemId=itemId;currentCloudFileName=name;
+    closeModal();
+    odStatus("CONNECTED — FILE OPEN","connected");
+    odFile(name);
+    message("Opened OneDrive job: "+name+" — "+result.added+" item(s) loaded.");
+  }catch(e){odStatus("OPEN ERROR","error");odFile(e.message);message("ONEDRIVE OPEN ERROR — "+e.message)}
+  finally{cloudSuspend=false}
+}
+function disconnectOneDrive(){
+  localStorage.removeItem(MS_TOKEN_KEY);
+  graphToken="";oneDriveFolder=null;currentCloudItemId="";currentCloudFileName="";
+  odStatus("NOT CONNECTED","disconnected");odFile("No cloud file selected yet.");
+}
+function initOneDriveUI(){
+  const auto=document.getElementById("oneDriveAutoSave");
+  if(auto){
+    auto.checked=localStorage.getItem(OD_AUTOSAVE_KEY)!=="0";
+    auto.addEventListener("change",()=>{
+      localStorage.setItem(OD_AUTOSAVE_KEY,auto.checked?"1":"0");
+      if(auto.checked)scheduleCloudSave(500);
+    });
+  }
+  const t=getStoredTokens();
+  if(t&&(t.access_token||t.refresh_token)){
+    odStatus("CONNECTING…","connecting");
+    ensureOneDriveFolder().then(()=>{
+      odStatus("CONNECTED — AUTOSAVE READY","connected");
+      odFile("AMV JOBS folder connected.");
+    }).catch(e=>{odStatus("CONNECTION ERROR","error");odFile(e.message)});
+  }
+}
+
 const JOBS_KEY="allmobilevideo_v28_jobs", ACTIVE_KEY="allmobilevideo_v28_active", CHECKERS_KEY="allmobilevideo_v36_checkers", TRUCKS_KEY="allmobilevideo_v37_trucks";
 let checkerNames=JSON.parse(localStorage.getItem(CHECKERS_KEY)||"[]");
 let truckNames=JSON.parse(localStorage.getItem(TRUCKS_KEY)||"[]");
@@ -536,6 +884,7 @@ function save(){
   jobs[activeJobId]={meta,records,history};
   localStorage.setItem(JOBS_KEY,JSON.stringify(jobs));
   localStorage.setItem(ACTIVE_KEY,activeJobId);
+  scheduleCloudSave();
 }
 jobName.value=meta.jobName||"";jobNumber.value=meta.jobNumber||"";bidNumber.value=meta.bidNumber||"";workOrder.value=meta.workOrder||"";scannerName.value=meta.scannerName||"";scannerInName.value=meta.scannerInName||"";renderCheckerOptions(meta.equipmentChecker||"");renderTruckOptions(meta.truckName||"");complete=!!meta.complete;[jobName,jobNumber,bidNumber,workOrder,scannerName,scannerInName].forEach(e=>e.addEventListener("input",save));equipmentChecker.addEventListener("change",save);truckName.addEventListener("change",save);newCheckerName.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addCheckerName()}});newTruckName.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addTruckName()}});
 function renderCheckerOptions(selected){
@@ -598,13 +947,45 @@ function editNote(barcode){
   save();render();
   message("Notes updated for "+k+".");
 }
-function render(){let q=clean(search.value).toLowerCase();rows.innerHTML="";let arr=Object.values(records).filter(r=>(r.barcode+" "+(r.notes||"")).toLowerCase().includes(q));arr.forEach((r,i)=>{let tr=document.createElement("tr");tr.innerHTML="<td class='center'>"+(i+1)+"</td><td><b>"+esc(r.barcode)+"</b></td><td><div class='noteCell'><span class='noteText'>"+esc(r.notes||"—")+"</span><button class='noteEdit' onclick='editNote("+JSON.stringify(r.barcode)+")'>EDIT NOTE</button></div></td><td class='center'>"+esc(r.scanOut)+"</td><td class='center'>"+esc(r.scanOutBy)+"</td><td class='center'>"+esc(r.scanIn||"—")+"</td><td class='center'>"+esc(r.scanInBy||"—")+"</td><td class='center "+(r.status==="IN"?"statusIN":"statusOUT")+"'>"+esc(r.status)+"</td>";rows.appendChild(tr)});let all=Object.values(records),o=all.filter(r=>r.status==="OUT").length,i=all.filter(r=>r.status==="IN").length;totalCount.textContent=all.length;outCount.textContent=o;inCount.textContent=i;outstandingCount.textContent=o;
-if(document.getElementById("printTotal")){
-  printTotal.textContent=all.length;
-  printOut.textContent=o;
-  printIn.textContent=i;
-  printOutstanding.textContent=o;
-}}
+
+function deleteScanHistoryItem(barcode){
+  const k=key(barcode)||barcode;
+  const r=records[k];
+  if(!r){message("Scan item not found.");return}
+  if(!confirm("DELETE THIS SCAN HISTORY ITEM?\n\nBarcode: "+r.barcode+"\n\nThis removes this barcode and its Scan OUT / Scan IN history."))return;
+  delete records[k];
+  history=history.filter(h=>clean(h.barcode).toLowerCase()!==clean(r.barcode).toLowerCase());
+  save();render();
+  message("DELETED — "+r.barcode);
+  scan.focus();
+}
+function render(){
+  let q=clean(search.value).toLowerCase();
+  rows.innerHTML="";
+  let arr=Object.values(records).filter(r=>(r.barcode+" "+(r.notes||"")).toLowerCase().includes(q));
+  arr.forEach((r,i)=>{
+    let tr=document.createElement("tr");
+    tr.innerHTML=
+      "<td class='center'>"+(i+1)+"</td>"+
+      "<td><b>"+esc(r.barcode)+"</b></td>"+
+      "<td><div class='noteCell'><span class='noteText'>"+esc(r.notes||"—")+"</span><button class='noteEdit' onclick='editNote("+JSON.stringify(r.barcode)+")'>EDIT NOTE</button></div></td>"+
+      "<td class='center'>"+esc(r.scanOut)+"</td>"+
+      "<td class='center'>"+esc(r.scanOutBy)+"</td>"+
+      "<td class='center'>"+esc(r.scanIn||"—")+"</td>"+
+      "<td class='center'>"+esc(r.scanInBy||"—")+"</td>"+
+      "<td class='center "+(r.status==="IN"?"statusIN":"statusOUT")+"'>"+esc(r.status)+"</td>"+
+      "<td class='center'><button class='deleteScanBtn' onclick='deleteScanHistoryItem("+JSON.stringify(r.barcode)+")'>DELETE</button></td>";
+    rows.appendChild(tr);
+  });
+  let all=Object.values(records),o=all.filter(r=>r.status==="OUT").length,i=all.filter(r=>r.status==="IN").length;
+  totalCount.textContent=all.length;outCount.textContent=o;inCount.textContent=i;outstandingCount.textContent=o;
+  if(document.getElementById("printTotal")){
+    printTotal.textContent=all.length;
+    printOut.textContent=o;
+    printIn.textContent=i;
+    printOutstanding.textContent=o;
+  }
+}
 function clearSearch(){search.value="";render()}
 function undoLast(){let h=history.pop();if(!h){message("Nothing to undo.");return}let k=key(h.barcode);if(h.type==="OUT"&&k)delete records[k];else if(k){records[k].scanIn="";records[k].scanInBy="";records[k].status="OUT"}save();render();message("Last scan undone.")}
 function showOutstanding(){document.querySelector("#modal h2").textContent="Outstanding Items";let a=Object.values(records).filter(r=>r.status==="OUT");modalBody.innerHTML=a.length?("<table><tr><th>Barcode</th><th>Notes</th><th>OUT</th><th>By</th></tr>"+a.map(r=>"<tr><td>"+r.barcode+"</td><td>"+(r.notes||"")+"</td><td>"+r.scanOut+"</td><td>"+r.scanOutBy+"</td></tr>").join("")+"</table>"):"<p>No outstanding items.</p>";modal.classList.remove("hidden")}
@@ -689,7 +1070,59 @@ function exportPDF(){let w=window.open("","_blank"),tr=Object.values(records).ma
 
 
 
-render();setMode("OUT");scan.focus();
+
+let importedPdfRows=[],importedPdfName="";
+
+pdfImportFile.addEventListener("change",async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{
+    if(!window.pdfjsLib)throw new Error("PDF reader is still loading. Try again in a moment.");
+    importedPdfRows=[];importedPdfName=f.name;
+    const pdf=await window.pdfjsLib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise;
+    for(let p=1;p<=pdf.numPages;p++){
+      const page=await pdf.getPage(p),content=await page.getTextContent();
+      const items=content.items.filter(x=>clean(x.str)).map(x=>({text:clean(x.str),x:Math.round(x.transform[4]),y:Math.round(x.transform[5])})).sort((a,b)=>Math.abs(b.y-a.y)>3?b.y-a.y:a.x-b.x);
+      const lines=[];
+      for(const it of items){
+        let line=lines.find(l=>Math.abs(l.y-it.y)<=3);
+        if(!line){line={y:it.y,items:[]};lines.push(line)}
+        line.items.push(it);
+      }
+      lines.sort((a,b)=>b.y-a.y).forEach((l,i)=>{
+        l.items.sort((a,b)=>a.x-b.x);
+        importedPdfRows.push({page:p,line:i+1,text:l.items.map(x=>x.text).join(" ")});
+      });
+    }
+    openPdfEditor();message("PDF imported. "+importedPdfRows.length+" editable lines extracted.");
+  }catch(err){message("PDF IMPORT ERROR — "+err.message)}
+  e.target.value="";
+});
+
+function openPdfEditor(){
+  document.querySelector("#modal h2").textContent="PDF EDITOR"+(importedPdfName?" — "+importedPdfName:"");
+  if(!importedPdfRows.length){modalBody.innerHTML="<p>No PDF loaded. Click IMPORT PDF first.</p>";modal.classList.remove("hidden");return}
+  modalBody.innerHTML="<div class='pdfToolbar'><button onclick='addPdfRow()'>ADD ROW</button><button onclick='savePdfEdits()'>SAVE EDITS</button><button onclick='exportPdfDataExcel()'>EXPORT TO EXCEL</button></div>"+
+  "<div style='max-height:60vh;overflow:auto'><table class='pdfEditorTable'><tr><th>Page</th><th>Line</th><th>Editable PDF Text</th><th></th></tr>"+
+  importedPdfRows.map((r,i)=>"<tr><td><input id='pp"+i+"' value='"+esc(r.page)+"'></td><td><input id='pl"+i+"' value='"+esc(r.line)+"'></td><td><textarea id='pt"+i+"'>"+esc(r.text)+"</textarea></td><td><button onclick='deletePdfRow("+i+")'>DELETE</button></td></tr>").join("")+
+  "</table></div>";modal.classList.remove("hidden");
+}
+function savePdfEdits(){
+  importedPdfRows=importedPdfRows.map((r,i)=>({page:clean(document.getElementById("pp"+i)?.value)||r.page,line:clean(document.getElementById("pl"+i)?.value)||r.line,text:clean(document.getElementById("pt"+i)?.value)}));
+  message("PDF edits saved.");
+}
+function addPdfRow(){savePdfEdits();importedPdfRows.push({page:1,line:importedPdfRows.length+1,text:""});openPdfEditor()}
+function deletePdfRow(i){savePdfEdits();importedPdfRows.splice(i,1);openPdfEditor()}
+function exportPdfDataExcel(){
+  if(!importedPdfRows.length){message("Import a PDF first.");return}
+  if(document.getElementById("pt0"))savePdfEdits();
+  const ws=XLSX.utils.json_to_sheet(importedPdfRows.map(r=>({"Page":r.page,"Line":r.line,"Edited PDF Text":r.text})));
+  ws["!cols"]=[{wch:10},{wch:10},{wch:100}];
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"PDF Data");
+  const base=(importedPdfName||"Imported-PDF").replace(/\.pdf$/i,"").replace(/[\\/:*?"<>|]/g,"-");
+  XLSX.writeFile(wb,base+"-Edited.xlsx");message("Edited PDF data exported to Excel.");
+}
+initOneDriveUI();
+handleMicrosoftCallback().finally(()=>{render();setMode("OUT");scan.focus();});
 
 </script>
 </body></html>
