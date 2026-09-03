@@ -1,41 +1,28 @@
-All Mobile Video v46 — OneDrive Auto Update
+All Mobile Video v48
 
-Configured for:
-GitHub Pages:
-https://paulboots.github.io/all-mobile-video-FS-Scan/
+MICROSOFT 403 FIX
 
-Microsoft Application (client) ID:
-fb3d7e2e-4a4a-48e0-af82-824c614ace4c
+The previous version's Entra app registration had Files.ReadWrite.All added,
+but the web app itself was still requesting only Files.ReadWrite.
 
-AMV OneDrive / SharePoint folder:
-JOBS
+v48 now requests:
+- User.Read
+- Files.ReadWrite
+- Files.ReadWrite.All
 
-NEW:
-- CONNECT ONEDRIVE
-- LOAD ONEDRIVE JOB
-- SAVE NOW
-- AUTO UPDATE EXCEL checkbox
-- OneDrive status shows CONNECTING / SAVING / SAVED / ERROR
-- After connection, job changes automatically update the Excel .xlsx file in the JOBS folder.
-- Uses a short delay after changes so it does not upload on every single keystroke.
-- Scan OUT, Scan IN, notes, delete, undo, job information, truck, checker, and completion changes trigger cloud autosave.
-- Existing OneDrive Excel jobs can be opened in the app.
-- Individual Scan History DELETE button fixed.
+It also:
+- Forces a fresh Microsoft consent screen.
+- Uses a new token cache key so the old token cannot be reused.
+- Keeps the existing GitHub Pages redirect URI and JOBS folder configuration.
 
-Cloud Excel filename:
-All-Mobile-Video-[JOB NUMBER].xlsx
-
-IMPORTANT:
-1. Upload the new index.html and amv-logo.jpg to the SAME GitHub repository.
-2. Open the GitHub Pages HTTPS site.
+After uploading v48 to GitHub:
+1. Open the live GitHub Pages site.
+2. Refresh the page.
 3. Click CONNECT ONEDRIVE.
-4. Sign in to the AMV Microsoft account that has access to the JOBS folder.
-5. Accept the requested Microsoft permissions if prompted.
-6. After connection, status should show CONNECTED — AUTOSAVE READY.
-7. Enter Job Name and Job Number. Auto cloud saving starts when both are present.
+4. Microsoft should show the permission consent screen again.
+5. Accept it.
+6. The app will return to GitHub Pages and retry the JOBS folder.
 
-No Microsoft password or client secret is stored in this app.
-Authentication uses OAuth authorization code + PKCE.
-
-If an Excel file is open in desktop Excel at the same time, OneDrive may take a moment
-to sync the newly uploaded version and Excel may display a refresh/conflict notification.
+If a 403 still occurs after v48, the likely remaining issue is that the
+signed-in Microsoft user does not itself have Edit permission to the shared
+JOBS folder, or a tenant policy is restricting Graph access.

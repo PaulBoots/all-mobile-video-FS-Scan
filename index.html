@@ -490,7 +490,7 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
 
 <div class="oneDriveCard">
   <h4>☁ ONEDRIVE — JOBS</h4>
-  <div class="oneDriveFixed">Automatic Excel backup to the AMV JOBS folder</div>
+  <div class="oneDriveFixed">Automatic Excel backup to the AMV JOBS folder<br><span style="font-weight:700">Cloud connection works from the live GitHub Pages site.</span></div>
   <div class="oneDriveButtons">
     <button class="odConnect" onclick="connectOneDrive()">CONNECT ONEDRIVE</button>
     <button onclick="loadOneDriveJobs()">LOAD ONEDRIVE JOB</button>
@@ -551,7 +551,7 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
 <div id="msg" class="msg">Ready. Current mode: SCAN OUT.</div>
 </main>
 
-<footer><span>All Mobile Video v46</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + OneDrive Excel autosave when connected ✓</span></footer>
+<footer><span>All Mobile Video v48</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + OneDrive Excel autosave when connected ✓</span></footer>
 </div>
 
 <div id="modal" class="modal hidden"><div class="modalcard"><button onclick="closeModal()" style="float:right">CLOSE</button><h2>Outstanding Items</h2><div id="modalBody"></div></div></div>
@@ -567,10 +567,10 @@ window.pdfjsLib=pdfjsLib;
 const MS_CLIENT_ID='fb3d7e2e-4a4a-48e0-af82-824c614ace4c';
 const MS_REDIRECT_URI='https://paulboots.github.io/all-mobile-video-FS-Scan/';
 const ONEDRIVE_FOLDER_URL='https://amvchelsea-my.sharepoint.com/:f:/p/ltran/IgCRFaFV4bEgRZJpobmllAEUAZ1Z4GmEPO82UUKk00x1Kgg?e=8muboy';
-const MS_SCOPE="openid profile offline_access User.Read Files.ReadWrite";
-const MS_TOKEN_KEY="allmobilevideo_v46_ms_tokens";
-const MS_PKCE_KEY="allmobilevideo_v46_ms_pkce";
-const OD_AUTOSAVE_KEY="allmobilevideo_v46_od_autosave";
+const MS_SCOPE="openid profile offline_access User.Read Files.ReadWrite Files.ReadWrite.All";
+const MS_TOKEN_KEY="allmobilevideo_v48_ms_tokens";
+const MS_PKCE_KEY="allmobilevideo_v48_ms_pkce";
+const OD_AUTOSAVE_KEY="allmobilevideo_v48_od_autosave";
 
 let graphToken="";
 let oneDriveFolder=null;
@@ -637,7 +637,12 @@ async function tokenRequest(params){
 }
 async function connectOneDrive(){
   try{
-    if(location.protocol!=="https:")throw new Error("Open the GitHub Pages HTTPS version of the app.");
+    if(location.protocol!=="https:"){
+      odStatus("OPENING SECURE GITHUB APP…","connecting");
+      odFile("Redirecting to the live HTTPS version...");
+      setTimeout(()=>location.href=MS_REDIRECT_URI,350);
+      return;
+    }
     if(!crypto||!crypto.subtle)throw new Error("Secure Microsoft sign-in is not supported in this browser.");
     const verifier=randomUrlString();
     const challenge=await sha256Url(verifier);
@@ -652,7 +657,7 @@ async function connectOneDrive(){
       state,
       code_challenge:challenge,
       code_challenge_method:"S256",
-      prompt:"select_account"
+      prompt:"consent"
     });
     odStatus("OPENING MICROSOFT SIGN-IN…","connecting");
     location.assign("https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?"+q.toString());
