@@ -1,11 +1,19 @@
-All Mobile Video v49
+All Mobile Video v51 — Google Drive Only
 
-SCAN ALARM IMPROVEMENT
-- Rejected scans now open a large blocking popup.
-- Scanner input is disabled while the popup is open.
-- The next barcode cannot be entered until OK is pressed.
-- Duplicate OUT, invalid IN, duplicate IN, missing job information, missing scanner name, and completed-job errors use the blocking popup.
-- The rejected barcode/reason is shown in large text.
-- Press OK, Enter, or Escape to close the alarm and return focus to the barcode field.
+IMPORTANT:
+GitHub Pages must be updated with this version.
+Upload BOTH:
+- index.html
+- amv-logo.jpg
 
-All v48 OneDrive and Excel features remain.
+Then open:
+https://paulboots.github.io/all-mobile-video-FS-Scan/?v=51
+
+You should see a small badge at the bottom-right:
+v51 · GOOGLE DRIVE ONLY
+
+If you still see OneDrive, GitHub Pages is still serving the old file.
+
+Google Drive settings in this build:
+- Folder ID: 1up5yMK1xY-B-8fJ4SA8jx_DlnenBYUHy
+- OAuth Client ID: 37301141974-kurs082b8n02bh6vk4j5bk3d1ta1con2.apps.googleusercontent.com

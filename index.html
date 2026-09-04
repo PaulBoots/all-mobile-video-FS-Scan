@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="en">
 <head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>All Mobile Video</title>
 <style>
@@ -429,30 +432,30 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
 .deleteScanBtn{background:#d71920;color:white;border:0;border-radius:5px;padding:7px 10px;font-weight:800;cursor:pointer}
 @media(max-width:700px){.deleteScanBtn{min-height:42px;padding:9px 12px;font-size:14px}}
 
-.oneDriveCard{margin:14px 0;background:#eef5ff;border:1px solid #9bbbe7;border-radius:8px;padding:12px}
-.oneDriveCard h4{margin:0 0 6px;font-size:16px;color:#063b82}
-.oneDriveFixed{font-size:12px;color:#444;margin-bottom:9px}
-.oneDriveButtons{display:grid;grid-template-columns:1fr;gap:7px}
-.oneDriveButtons button{min-height:40px;border:0;border-radius:5px;background:#0753bb;color:white;font-weight:800;cursor:pointer;padding:8px}
-.oneDriveButtons .odConnect{background:#087f2f}
-.oneDriveAuto{margin-top:9px;font-size:13px;font-weight:700}
-.oneDriveAuto input{transform:scale(1.2);margin-right:7px}
-.oneDriveStatus{margin-top:9px;border-radius:5px;padding:8px 9px;font-weight:900;font-size:12px;text-align:center}
-.oneDriveStatus.disconnected{background:#e8e8e8;color:#333}
-.oneDriveStatus.connecting,.oneDriveStatus.saving{background:#fff1bd;color:#6b4b00}
-.oneDriveStatus.connected,.oneDriveStatus.saved{background:#d9f5df;color:#075b20}
-.oneDriveStatus.error{background:#ffd9d9;color:#9b111e}
-.oneDriveFile{font-size:11px;color:#333;margin-top:7px;overflow-wrap:anywhere}
+.googleDriveCard{margin:14px 0;background:#eef5ff;border:1px solid #9bbbe7;border-radius:8px;padding:12px}
+.googleDriveCard h4{margin:0 0 6px;font-size:16px;color:#063b82}
+.googleDriveFixed{font-size:12px;color:#444;margin-bottom:9px}
+.googleDriveButtons{display:grid;grid-template-columns:1fr;gap:7px}
+.googleDriveButtons button{min-height:40px;border:0;border-radius:5px;background:#0753bb;color:white;font-weight:800;cursor:pointer;padding:8px}
+.googleDriveButtons .gdConnect{background:#087f2f}
+.googleDriveAuto{margin-top:9px;font-size:13px;font-weight:700}
+.googleDriveAuto input{transform:scale(1.2);margin-right:7px}
+.googleDriveStatus{margin-top:9px;border-radius:5px;padding:8px 9px;font-weight:900;font-size:12px;text-align:center}
+.googleDriveStatus.disconnected{background:#e8e8e8;color:#333}
+.googleDriveStatus.connecting,.googleDriveStatus.saving{background:#fff1bd;color:#6b4b00}
+.googleDriveStatus.connected,.googleDriveStatus.saved{background:#d9f5df;color:#075b20}
+.googleDriveStatus.error{background:#ffd9d9;color:#9b111e}
+.googleDriveFile{font-size:11px;color:#333;margin-top:7px;overflow-wrap:anywhere}
 @media(max-width:700px){
-  .oneDriveCard{padding:14px}
-  .oneDriveCard h4{font-size:20px}
-  .oneDriveFixed{font-size:14px}
-  .oneDriveButtons{grid-template-columns:1fr 1fr}
-  .oneDriveButtons button{min-height:54px;font-size:15px}
-  .oneDriveButtons button:first-child{grid-column:1 / -1}
-  .oneDriveAuto{font-size:16px;padding:8px 0}
-  .oneDriveStatus{font-size:15px;padding:11px}
-  .oneDriveFile{font-size:13px}
+  .googleDriveCard{padding:14px}
+  .googleDriveCard h4{font-size:20px}
+  .googleDriveFixed{font-size:14px}
+  .googleDriveButtons{grid-template-columns:1fr 1fr}
+  .googleDriveButtons button{min-height:54px;font-size:15px}
+  .googleDriveButtons button:first-child{grid-column:1 / -1}
+  .googleDriveAuto{font-size:16px;padding:8px 0}
+  .googleDriveStatus{font-size:15px;padding:11px}
+  .googleDriveFile{font-size:13px}
 }
 
 
@@ -487,7 +490,7 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 
 </style>
 </head>
-<body>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#111;color:#fff;padding:5px 8px;border-radius:6px;font:700 11px Arial">v51 · GOOGLE DRIVE ONLY</div>
 <div class="app">
 <header>
 <div class="logo"><img src="amv-logo.jpg" alt="AMV"></div>
@@ -518,21 +521,20 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 <input id="pdfImportFile" type="file" accept=".pdf,application/pdf" style="display:none">
 
 
-<div class="oneDriveCard">
-  <h4>☁ ONEDRIVE — JOBS</h4>
-  <div class="oneDriveFixed">Automatic Excel backup to the AMV JOBS folder<br><span style="font-weight:700">Cloud connection works from the live GitHub Pages site.</span></div>
-  <div class="oneDriveButtons">
-    <button class="odConnect" onclick="connectOneDrive()">CONNECT ONEDRIVE</button>
-    <button onclick="loadOneDriveJobs()">LOAD ONEDRIVE JOB</button>
-    <button onclick="cloudSaveNow()">SAVE NOW</button>
+<div class="googleDriveCard">
+  <h4>☁ GOOGLE DRIVE ONLY — JOBS · v51</h4>
+  <div class="googleDriveFixed">Automatic Excel backup to the shared Google Drive JOBS folder</div>
+  <div class="googleDriveButtons">
+    <button class="gdConnect" onclick="connectGoogleDrive()">CONNECT GOOGLE DRIVE</button>
+    <button onclick="loadGoogleDriveJobs()">LOAD GOOGLE DRIVE JOB</button>
+    <button onclick="testGoogleDrive()">TEST GOOGLE DRIVE</button><button onclick="cloudSaveNow()">SAVE NOW</button>
   </div>
-  <div class="oneDriveAuto">
-    <label><input id="oneDriveAutoSave" type="checkbox" checked> AUTO UPDATE EXCEL</label>
+  <div class="googleDriveAuto">
+    <label><input id="googleDriveAutoSave" type="checkbox" checked> AUTO UPDATE EXCEL</label>
   </div>
-  <div id="oneDriveStatus" class="oneDriveStatus disconnected">NOT CONNECTED</div>
-  <div id="oneDriveFile" class="oneDriveFile">No cloud file selected yet.</div>
+  <div id="googleDriveStatus" class="googleDriveStatus disconnected">NOT CONNECTED</div>
+  <div id="googleDriveFile" class="googleDriveFile">No cloud file selected yet.</div>
 </div>
-
 <div class="summary"><h3>SUMMARY</h3>
 <div class="sumrow"><span>TOTAL ITEMS</span><b id="totalCount">0</b></div>
 <div class="sumrow"><span class="red">CHECKED OUT</span><b id="outCount" class="red">0</b></div>
@@ -581,7 +583,7 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 <div id="msg" class="msg">Ready. Current mode: SCAN OUT.</div>
 </main>
 
-<footer><span>All Mobile Video v49</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + OneDrive Excel autosave when connected ✓</span></footer>
+<footer><span>All Mobile Video v51</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + Google Drive Excel autosave when connected ✓</span></footer>
 </div>
 
 
@@ -602,19 +604,20 @@ import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38
 pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
 window.pdfjsLib=pdfjsLib;
 </script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 
-const MS_CLIENT_ID='fb3d7e2e-4a4a-48e0-af82-824c614ace4c';
-const MS_REDIRECT_URI='https://paulboots.github.io/all-mobile-video-FS-Scan/';
-const ONEDRIVE_FOLDER_URL='https://amvchelsea-my.sharepoint.com/:f:/p/ltran/IgCRFaFV4bEgRZJpobmllAEUAZ1Z4GmEPO82UUKk00x1Kgg?e=8muboy';
-const MS_SCOPE="openid profile offline_access User.Read Files.ReadWrite Files.ReadWrite.All";
-const MS_TOKEN_KEY="allmobilevideo_v48_ms_tokens";
-const MS_PKCE_KEY="allmobilevideo_v48_ms_pkce";
-const OD_AUTOSAVE_KEY="allmobilevideo_v48_od_autosave";
 
-let graphToken="";
-let oneDriveFolder=null;
+const GOOGLE_CLIENT_ID='37301141974-kurs082b8n02bh6vk4j5bk3d1ta1con2.apps.googleusercontent.com';
+const GOOGLE_FOLDER_ID='1up5yMK1xY-B-8fJ4SA8jx_DlnenBYUHy';
+const GOOGLE_SCOPE="https://www.googleapis.com/auth/drive";
+const GOOGLE_TOKEN_KEY="allmobilevideo_v50_google_token";
+const GD_AUTOSAVE_KEY="allmobilevideo_v50_gd_autosave";
+
+let googleAccessToken="";
+let googleTokenExpiresAt=0;
+let googleTokenClient=null;
 let cloudSaveTimer=null;
 let cloudSaving=false;
 let cloudSavePending=false;
@@ -622,138 +625,88 @@ let cloudSuspend=false;
 let currentCloudItemId="";
 let currentCloudFileName="";
 
-function odStatus(text,state="disconnected"){
-  const el=document.getElementById("oneDriveStatus");
+function gdStatus(text,state="disconnected"){
+  const el=document.getElementById("googleDriveStatus");
   if(!el)return;
   el.textContent=text;
-  el.className="oneDriveStatus "+state;
+  el.className="googleDriveStatus "+state;
 }
-function odFile(text){
-  const el=document.getElementById("oneDriveFile");
+function gdFile(text){
+  const el=document.getElementById("googleDriveFile");
   if(el)el.textContent=text||"";
 }
 function cloudAutoEnabled(){
-  const e=document.getElementById("oneDriveAutoSave");
+  const e=document.getElementById("googleDriveAutoSave");
   return !!(e&&e.checked);
 }
-function base64UrlBytes(bytes){
-  let x="";bytes.forEach(b=>x+=String.fromCharCode(b));
-  return btoa(x).replace(/=/g,"").replace(/\+/g,"-").replace(/\//g,"_");
+function storeGoogleToken(token,expiresIn=3600){
+  googleAccessToken=token||"";
+  googleTokenExpiresAt=Date.now()+Math.max(60,Number(expiresIn||3600)-60)*1000;
+  sessionStorage.setItem(GOOGLE_TOKEN_KEY,JSON.stringify({
+    access_token:googleAccessToken,
+    expires_at:googleTokenExpiresAt
+  }));
 }
-function base64UrlEncode(text){
-  const bytes=new TextEncoder().encode(text);
-  return base64UrlBytes(bytes);
-}
-function randomUrlString(bytes=48){
-  const a=new Uint8Array(bytes);crypto.getRandomValues(a);return base64UrlBytes(a);
-}
-async function sha256Url(text){
-  const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(text));
-  return base64UrlBytes(new Uint8Array(d));
-}
-function getStoredTokens(){
-  try{return JSON.parse(localStorage.getItem(MS_TOKEN_KEY)||"null")}catch(e){return null}
-}
-function storeTokens(data){
-  const old=getStoredTokens()||{};
-  const expiresIn=Number(data.expires_in||3600);
-  const obj={
-    access_token:data.access_token||old.access_token||"",
-    refresh_token:data.refresh_token||old.refresh_token||"",
-    expires_at:Date.now()+Math.max(60,expiresIn-120)*1000
-  };
-  localStorage.setItem(MS_TOKEN_KEY,JSON.stringify(obj));
-  graphToken=obj.access_token;
-}
-async function tokenRequest(params){
-  const r=await fetch("https://login.microsoftonline.com/organizations/oauth2/v2.0/token",{
-    method:"POST",
-    headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:new URLSearchParams(params).toString()
-  });
-  let data={};
-  try{data=await r.json()}catch(e){}
-  if(!r.ok)throw new Error((data.error_description||data.error||("Microsoft sign-in error "+r.status)).replace(/\r?\n/g," "));
-  storeTokens(data);return data;
-}
-async function connectOneDrive(){
+function restoreGoogleToken(){
   try{
-    if(location.protocol!=="https:"){
-      odStatus("OPENING SECURE GITHUB APP…","connecting");
-      odFile("Redirecting to the live HTTPS version...");
-      setTimeout(()=>location.href=MS_REDIRECT_URI,350);
-      return;
+    const t=JSON.parse(sessionStorage.getItem(GOOGLE_TOKEN_KEY)||"null");
+    if(t&&t.access_token&&Date.now()<Number(t.expires_at||0)){
+      googleAccessToken=t.access_token;
+      googleTokenExpiresAt=Number(t.expires_at||0);
+      return true;
     }
-    if(!crypto||!crypto.subtle)throw new Error("Secure Microsoft sign-in is not supported in this browser.");
-    const verifier=randomUrlString();
-    const challenge=await sha256Url(verifier);
-    const state=randomUrlString(24);
-    localStorage.setItem(MS_PKCE_KEY,JSON.stringify({verifier,state}));
-    const q=new URLSearchParams({
-      client_id:MS_CLIENT_ID,
-      response_type:"code",
-      redirect_uri:MS_REDIRECT_URI,
-      response_mode:"query",
-      scope:MS_SCOPE,
-      state,
-      code_challenge:challenge,
-      code_challenge_method:"S256",
-      prompt:"consent"
-    });
-    odStatus("OPENING MICROSOFT SIGN-IN…","connecting");
-    location.assign("https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?"+q.toString());
-  }catch(e){odStatus("CONNECT ERROR — "+e.message,"error")}
+  }catch(e){}
+  return false;
 }
-async function handleMicrosoftCallback(){
-  const q=new URLSearchParams(location.search);
-  const err=q.get("error"),code=q.get("code");
-  if(err){
-    odStatus("CONNECT ERROR — "+(q.get("error_description")||err),"error");
-    history.replaceState({},document.title,location.pathname);
+function initGoogleTokenClient(){
+  if(!window.google||!google.accounts||!google.accounts.oauth2)return false;
+  googleTokenClient=google.accounts.oauth2.initTokenClient({
+    client_id:GOOGLE_CLIENT_ID,
+    scope:GOOGLE_SCOPE,
+    callback:async (resp)=>{
+      if(resp.error){
+        gdStatus("CONNECT ERROR","error");
+        gdFile(resp.error_description||resp.error);
+        return;
+      }
+      storeGoogleToken(resp.access_token,resp.expires_in);
+      gdStatus("VERIFYING GOOGLE DRIVE JOBS FOLDER…","connecting");
+      gdFile("Checking access to the shared JOBS folder.");
+      try{
+        const f=await verifyGoogleFolder();
+        gdStatus("CONNECTED TO GOOGLE DRIVE — JOBS ✓","connected");
+        gdFile("Folder: "+(f.name||"JOBS")+" — autosave ready.");
+        scheduleCloudSave(800);
+      }catch(e){
+        gdStatus("GOOGLE DRIVE FOLDER ERROR","error");
+        gdFile(e.message);
+      }
+    }
+  });
+  return true;
+}
+function connectGoogleDrive(){
+  if(location.protocol!=="https:"){
+    gdStatus("OPENING SECURE GITHUB APP…","connecting");
+    gdFile("Google sign-in must run from the live GitHub Pages HTTPS site.");
+    setTimeout(()=>location.href="https://paulboots.github.io/all-mobile-video-FS-Scan/?v=51",400);
     return;
   }
-  if(!code)return false;
-  try{
-    const saved=JSON.parse(localStorage.getItem(MS_PKCE_KEY)||"null");
-    if(!saved)throw new Error("Microsoft sign-in session was not found.");
-    if(q.get("state")!==saved.state)throw new Error("Microsoft sign-in security check failed.");
-    await tokenRequest({
-      client_id:MS_CLIENT_ID,
-      grant_type:"authorization_code",
-      code,
-      redirect_uri:MS_REDIRECT_URI,
-      code_verifier:saved.verifier,
-      scope:MS_SCOPE
-    });
-    localStorage.removeItem(MS_PKCE_KEY);
-    history.replaceState({},document.title,location.pathname);
-    await resolveOneDriveFolder();
-    odStatus("CONNECTED — AUTOSAVE READY","connected");
-    odFile("AMV JOBS folder connected.");
-    scheduleCloudSave(800);
-    return true;
-  }catch(e){
-    history.replaceState({},document.title,location.pathname);
-    odStatus("CONNECT ERROR — "+e.message,"error");
-    return false;
+  if(!googleTokenClient && !initGoogleTokenClient()){
+    gdStatus("GOOGLE SIGN-IN NOT READY","error");
+    gdFile("Reload the page and try again.");
+    return;
   }
+  gdStatus("OPENING GOOGLE SIGN-IN…","connecting");
+  googleTokenClient.requestAccessToken({prompt:"consent"});
 }
-async function getGraphToken(){
-  const t=getStoredTokens();
-  if(t&&t.access_token&&Date.now()<Number(t.expires_at||0))return t.access_token;
-  if(t&&t.refresh_token){
-    const d=await tokenRequest({
-      client_id:MS_CLIENT_ID,
-      grant_type:"refresh_token",
-      refresh_token:t.refresh_token,
-      scope:MS_SCOPE
-    });
-    return d.access_token;
-  }
-  throw new Error("Not connected. Click CONNECT ONEDRIVE.");
+async function getGoogleToken(){
+  if(googleAccessToken&&Date.now()<googleTokenExpiresAt)return googleAccessToken;
+  if(restoreGoogleToken())return googleAccessToken;
+  throw new Error("Not connected. Click CONNECT GOOGLE DRIVE.");
 }
-async function graphFetch(url,options={}){
-  const token=await getGraphToken();
+async function googleFetch(url,options={}){
+  const token=await getGoogleToken();
   const headers=Object.assign({},options.headers||{},{Authorization:"Bearer "+token});
   const r=await fetch(url,Object.assign({},options,{headers}));
   if(!r.ok){
@@ -762,136 +715,203 @@ async function graphFetch(url,options={}){
       const j=await r.json();
       detail=(j.error&&j.error.message)||JSON.stringify(j);
     }catch(e){try{detail=await r.text()}catch(_e){}}
-    throw new Error("Microsoft Graph "+r.status+(detail?" — "+detail.slice(0,240):""));
+    if(r.status===401){
+      googleAccessToken="";
+      googleTokenExpiresAt=0;
+      sessionStorage.removeItem(GOOGLE_TOKEN_KEY);
+    }
+    throw new Error("Google Drive "+r.status+(detail?" — "+detail.slice(0,260):""));
   }
   return r;
 }
-async function resolveOneDriveFolder(){
-  const shareId="u!"+base64UrlEncode(ONEDRIVE_FOLDER_URL);
-  const r=await graphFetch("https://graph.microsoft.com/v1.0/shares/"+shareId+"/driveItem?$select=id,name,parentReference,remoteItem");
-  const item=await r.json();
-  const x=item.remoteItem||item;
-  const driveId=(x.parentReference&&x.parentReference.driveId)||(item.parentReference&&item.parentReference.driveId);
-  const itemId=x.id||item.id;
-  if(!driveId||!itemId)throw new Error("Could not resolve the AMV JOBS folder.");
-  oneDriveFolder={driveId,itemId,name:x.name||item.name||"JOBS"};
-  return oneDriveFolder;
+async function verifyGoogleFolder(){
+  const r=await googleFetch(
+    "https://www.googleapis.com/drive/v3/files/"+encodeURIComponent(GOOGLE_FOLDER_ID)+
+    "?fields=id,name,mimeType,capabilities(canAddChildren,canEdit)&supportsAllDrives=true"
+  );
+  const f=await r.json();
+  if(f.mimeType!=="application/vnd.google-apps.folder")throw new Error("The configured JOBS item is not a folder.");
+  if(f.capabilities&&f.capabilities.canAddChildren===false)throw new Error("Your Google account does not have permission to add files to this JOBS folder.");
+  return f;
 }
-async function ensureOneDriveFolder(){
-  if(oneDriveFolder)return oneDriveFolder;
-  return await resolveOneDriveFolder();
+async function testGoogleDrive(){
+  try{
+    gdStatus("TESTING GOOGLE DRIVE…","connecting");
+    const f=await verifyGoogleFolder();
+    const q="'"+GOOGLE_FOLDER_ID+"' in parents and trashed=false";
+    const r=await googleFetch(
+      "https://www.googleapis.com/drive/v3/files?q="+encodeURIComponent(q)+
+      "&fields=files(id,name,modifiedTime,size)&pageSize=10&supportsAllDrives=true&includeItemsFromAllDrives=true"
+    );
+    const d=await r.json();
+    gdStatus("CONNECTED TO GOOGLE DRIVE — JOBS ✓","connected");
+    gdFile("Folder: "+(f.name||"JOBS")+" — "+((d.files||[]).length)+" item(s) visible.");
+    message("Google Drive connection is working.");
+  }catch(e){
+    gdStatus("GOOGLE DRIVE TEST FAILED","error");
+    gdFile(e.message);
+    message("GOOGLE DRIVE TEST FAILED — "+e.message);
+  }
 }
 function safeCloudName(){
   const jn=clean(jobNumber.value)||clean(jobName.value)||"Job";
   return ("All-Mobile-Video-"+jn+".xlsx").replace(/[\\/:*?"<>|]/g,"-");
 }
-function workbookBytes(){
-  return XLSX.write(workbook(),{bookType:"xlsx",type:"array"});
+function workbookBlob(){
+  const bytes=XLSX.write(workbook(),{bookType:"xlsx",type:"array"});
+  return new Blob([bytes],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
 }
 function scheduleCloudSave(delay=2200){
   if(cloudSuspend||!cloudAutoEnabled())return;
-  const t=getStoredTokens();
-  if(!t||(!t.access_token&&!t.refresh_token))return;
+  if(!googleAccessToken&&!restoreGoogleToken())return;
   clearTimeout(cloudSaveTimer);
   cloudSaveTimer=setTimeout(()=>cloudSaveNow(true),delay);
+}
+async function findGoogleJobFile(filename){
+  const q="'"+GOOGLE_FOLDER_ID+"' in parents and trashed=false and name='"+filename.replace(/'/g,"\\'")+"'";
+  const url="https://www.googleapis.com/drive/v3/files?q="+encodeURIComponent(q)+
+    "&fields=files(id,name,modifiedTime,size)&spaces=drive&pageSize=20&supportsAllDrives=true&includeItemsFromAllDrives=true";
+  const r=await googleFetch(url);
+  const d=await r.json();
+  return (d.files||[])[0]||null;
+}
+async function createGoogleFile(filename,blob){
+  const boundary="-------amv"+Date.now();
+  const metadata={name:filename,parents:[GOOGLE_FOLDER_ID]};
+  const body=new Blob([
+    "--"+boundary+"\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n",
+    JSON.stringify(metadata),
+    "\r\n--"+boundary+"\r\nContent-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\r\n\r\n",
+    blob,
+    "\r\n--"+boundary+"--"
+  ]);
+  const r=await googleFetch(
+    "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,modifiedTime&supportsAllDrives=true",
+    {method:"POST",headers:{"Content-Type":"multipart/related; boundary="+boundary},body}
+  );
+  return await r.json();
+}
+async function updateGoogleFile(fileId,blob){
+  const r=await googleFetch(
+    "https://www.googleapis.com/upload/drive/v3/files/"+encodeURIComponent(fileId)+
+    "?uploadType=media&fields=id,name,modifiedTime&supportsAllDrives=true",
+    {method:"PATCH",headers:{"Content-Type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},body:blob}
+  );
+  return await r.json();
 }
 async function cloudSaveNow(silent=false){
   if(cloudSuspend)return;
   if(cloudSaving){cloudSavePending=true;return}
   if(!clean(jobName.value)||!clean(jobNumber.value)){
-    if(!silent)odStatus("ENTER JOB NAME + JOB NUMBER FIRST","error");
+    if(!silent)gdStatus("ENTER JOB NAME + JOB NUMBER FIRST","error");
     return;
   }
   cloudSaving=true;cloudSavePending=false;
   try{
-    const f=await ensureOneDriveFolder();
+    await verifyGoogleFolder();
     const filename=safeCloudName();
-    odStatus("SAVING EXCEL…","saving");
-    odFile(filename);
-    const bytes=workbookBytes();
-    const url="https://graph.microsoft.com/v1.0/drives/"+encodeURIComponent(f.driveId)+"/items/"+encodeURIComponent(f.itemId)+":/"+encodeURIComponent(filename)+":/content";
-    const r=await graphFetch(url,{
-      method:"PUT",
-      headers:{"Content-Type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
-      body:bytes
-    });
-    const saved=await r.json();
-    currentCloudItemId=saved.id||"";
-    currentCloudFileName=saved.name||filename;
-    odStatus("SAVED ✓","saved");
-    odFile(currentCloudFileName+" — "+new Date().toLocaleTimeString());
-    if(!silent)message("OneDrive Excel updated: "+currentCloudFileName);
+    gdStatus("SAVING EXCEL…","saving");
+    gdFile(filename);
+    const blob=workbookBlob();
+    let item=null;
+    if(currentCloudItemId&&currentCloudFileName===filename){
+      item=await updateGoogleFile(currentCloudItemId,blob);
+    }else{
+      const existing=await findGoogleJobFile(filename);
+      item=existing?await updateGoogleFile(existing.id,blob):await createGoogleFile(filename,blob);
+    }
+    currentCloudItemId=item.id||"";
+    currentCloudFileName=item.name||filename;
+    gdStatus("SAVED ✓","saved");
+    gdFile(currentCloudFileName+" — "+new Date().toLocaleTimeString());
+    if(!silent)message("Google Drive Excel updated: "+currentCloudFileName);
   }catch(e){
-    odStatus("SAVE ERROR","error");
-    odFile(e.message);
-    if(!silent)message("ONEDRIVE SAVE ERROR — "+e.message);
+    gdStatus("SAVE ERROR","error");
+    gdFile(e.message);
+    if(!silent)message("GOOGLE DRIVE SAVE ERROR — "+e.message);
   }finally{
     cloudSaving=false;
     if(cloudSavePending){cloudSavePending=false;scheduleCloudSave(500)}
   }
 }
-async function loadOneDriveJobs(){
+async function loadGoogleDriveJobs(){
   try{
-    const f=await ensureOneDriveFolder();
-    odStatus("LOADING JOB LIST…","connecting");
-    let url="https://graph.microsoft.com/v1.0/drives/"+encodeURIComponent(f.driveId)+"/items/"+encodeURIComponent(f.itemId)+"/children?$select=id,name,file,lastModifiedDateTime,size&$top=200";
-    let files=[];
-    while(url){
-      const r=await graphFetch(url),d=await r.json();
-      files.push(...(d.value||[]).filter(x=>x.file&&/\.xlsx$/i.test(x.name)));
-      url=d["@odata.nextLink"]||"";
-    }
-    files.sort((a,b)=>new Date(b.lastModifiedDateTime)-new Date(a.lastModifiedDateTime));
-    document.querySelector("#modal h2").textContent="OneDrive — JOBS ("+files.length+")";
+    await verifyGoogleFolder();
+    gdStatus("LOADING JOB LIST…","connecting");
+    const q="'"+GOOGLE_FOLDER_ID+"' in parents and trashed=false and mimeType='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'";
+    const url="https://www.googleapis.com/drive/v3/files?q="+encodeURIComponent(q)+
+      "&fields=files(id,name,modifiedTime,size)&orderBy=modifiedTime desc&pageSize=200&supportsAllDrives=true&includeItemsFromAllDrives=true";
+    const r=await googleFetch(url),d=await r.json();
+    const files=d.files||[];
+    document.querySelector("#modal h2").textContent="Google Drive — JOBS ("+files.length+")";
     modalBody.innerHTML=files.length?(
       "<div class='jobList'>"+files.map(x=>
         "<div class='jobItem'><div><div class='jobItemTitle'>"+esc(x.name)+"</div>"+
-        "<div class='jobItemMeta'>Updated: "+esc(new Date(x.lastModifiedDateTime).toLocaleString())+" &nbsp; | &nbsp; "+Math.max(1,Math.round((x.size||0)/1024))+" KB</div></div>"+
-        "<div class='jobActions'><button class='openJobBtn' onclick='openOneDriveFile("+JSON.stringify(x.id)+","+JSON.stringify(x.name)+")'>OPEN</button></div></div>"
+        "<div class='jobItemMeta'>Updated: "+esc(new Date(x.modifiedTime).toLocaleString())+" &nbsp; | &nbsp; "+Math.max(1,Math.round(Number(x.size||0)/1024))+" KB</div></div>"+
+        "<div class='jobActions'><button class='openJobBtn' onclick='openGoogleDriveFile("+JSON.stringify(x.id)+","+JSON.stringify(x.name)+")'>OPEN</button></div></div>"
       ).join("")+"</div>"
     ):"<p>No Excel job files were found in the JOBS folder.</p>";
     modal.classList.remove("hidden");
-    odStatus("CONNECTED — "+files.length+" FILE(S)","connected");
-  }catch(e){odStatus("LOAD ERROR","error");odFile(e.message);message("ONEDRIVE LOAD ERROR — "+e.message)}
+    gdStatus("CONNECTED — "+files.length+" FILE(S)","connected");
+  }catch(e){
+    gdStatus("LOAD ERROR","error");gdFile(e.message);message("GOOGLE DRIVE LOAD ERROR — "+e.message);
+  }
 }
-async function openOneDriveFile(itemId,name){
+async function openGoogleDriveFile(itemId,name){
   try{
-    const f=await ensureOneDriveFolder();
     cloudSuspend=true;
-    odStatus("OPENING "+name+"…","connecting");
-    const r=await graphFetch("https://graph.microsoft.com/v1.0/drives/"+encodeURIComponent(f.driveId)+"/items/"+encodeURIComponent(itemId)+"/content");
+    gdStatus("OPENING "+name+"…","connecting");
+    const r=await googleFetch(
+      "https://www.googleapis.com/drive/v3/files/"+encodeURIComponent(itemId)+
+      "?alt=media&supportsAllDrives=true"
+    );
     const wb=XLSX.read(await r.arrayBuffer(),{type:"array",cellDates:true});
     const result=importWB(wb);
     currentCloudItemId=itemId;currentCloudFileName=name;
     closeModal();
-    odStatus("CONNECTED — FILE OPEN","connected");
-    odFile(name);
-    message("Opened OneDrive job: "+name+" — "+result.added+" item(s) loaded.");
-  }catch(e){odStatus("OPEN ERROR","error");odFile(e.message);message("ONEDRIVE OPEN ERROR — "+e.message)}
-  finally{cloudSuspend=false}
+    gdStatus("CONNECTED — FILE OPEN","connected");
+    gdFile(name);
+    message("Opened Google Drive job: "+name+" — "+result.added+" item(s) loaded.");
+  }catch(e){
+    gdStatus("OPEN ERROR","error");gdFile(e.message);message("GOOGLE DRIVE OPEN ERROR — "+e.message);
+  }finally{cloudSuspend=false}
 }
-function disconnectOneDrive(){
-  localStorage.removeItem(MS_TOKEN_KEY);
-  graphToken="";oneDriveFolder=null;currentCloudItemId="";currentCloudFileName="";
-  odStatus("NOT CONNECTED","disconnected");odFile("No cloud file selected yet.");
+function disconnectGoogleDrive(){
+  if(googleAccessToken&&window.google&&google.accounts&&google.accounts.oauth2){
+    try{google.accounts.oauth2.revoke(googleAccessToken,()=>{})}catch(e){}
+  }
+  googleAccessToken="";googleTokenExpiresAt=0;
+  sessionStorage.removeItem(GOOGLE_TOKEN_KEY);
+  currentCloudItemId="";currentCloudFileName="";
+  gdStatus("NOT CONNECTED","disconnected");
+  gdFile("No cloud file selected yet.");
 }
-function initOneDriveUI(){
-  const auto=document.getElementById("oneDriveAutoSave");
+function initGoogleDriveUI(){
+  try{
+    [
+      "allmobilevideo_v48_ms_tokens","allmobilevideo_v48_ms_pkce","allmobilevideo_v48_od_autosave",
+      "allmobilevideo_v47_ms_tokens","allmobilevideo_v47_ms_pkce","allmobilevideo_v47_od_autosave",
+      "allmobilevideo_v46_ms_tokens","allmobilevideo_v46_ms_pkce","allmobilevideo_v46_od_autosave"
+    ].forEach(k=>{localStorage.removeItem(k);sessionStorage.removeItem(k);});
+  }catch(e){}
+
+  const auto=document.getElementById("googleDriveAutoSave");
   if(auto){
-    auto.checked=localStorage.getItem(OD_AUTOSAVE_KEY)!=="0";
+    auto.checked=localStorage.getItem(GD_AUTOSAVE_KEY)!=="0";
     auto.addEventListener("change",()=>{
-      localStorage.setItem(OD_AUTOSAVE_KEY,auto.checked?"1":"0");
+      localStorage.setItem(GD_AUTOSAVE_KEY,auto.checked?"1":"0");
       if(auto.checked)scheduleCloudSave(500);
     });
   }
-  const t=getStoredTokens();
-  if(t&&(t.access_token||t.refresh_token)){
-    odStatus("CONNECTING…","connecting");
-    ensureOneDriveFolder().then(()=>{
-      odStatus("CONNECTED — AUTOSAVE READY","connected");
-      odFile("AMV JOBS folder connected.");
-    }).catch(e=>{odStatus("CONNECTION ERROR","error");odFile(e.message)});
+  if(restoreGoogleToken()){
+    gdStatus("CONNECTED — AUTOSAVE READY","connected");
+    gdFile("Google session restored.");
   }
+  let tries=0;
+  const t=setInterval(()=>{
+    tries++;
+    if(initGoogleTokenClient()||tries>30)clearInterval(t);
+  },200);
 }
 
 const JOBS_KEY="allmobilevideo_v28_jobs", ACTIVE_KEY="allmobilevideo_v28_active", CHECKERS_KEY="allmobilevideo_v36_checkers", TRUCKS_KEY="allmobilevideo_v37_trucks";
@@ -1198,8 +1218,8 @@ function exportPdfDataExcel(){
   const base=(importedPdfName||"Imported-PDF").replace(/\.pdf$/i,"").replace(/[\\/:*?"<>|]/g,"-");
   XLSX.writeFile(wb,base+"-Edited.xlsx");message("Edited PDF data exported to Excel.");
 }
-initOneDriveUI();
-handleMicrosoftCallback().finally(()=>{render();setMode("OUT");scan.focus();});
+initGoogleDriveUI();
+render();setMode("OUT");scan.focus();
 
 </script>
 </body></html>
