@@ -1,19 +1,19 @@
-All Mobile Video v51 — Google Drive Only
+All Mobile Video v56
 
-IMPORTANT:
-GitHub Pages must be updated with this version.
-Upload BOTH:
-- index.html
-- amv-logo.jpg
+FIXED GOOGLE DRIVE CONNECTION:
+v55 accidentally changed the GitHub Pages path from:
+https://paulboots.github.io/all-mobile-video-FS-Scan/
+to:
+https://paulboots.github.io/FS-Scan/
 
-Then open:
-https://paulboots.github.io/all-mobile-video-FS-Scan/?v=51
+v56 restores the correct GitHub Pages path.
 
-You should see a small badge at the bottom-right:
-v51 · GOOGLE DRIVE ONLY
+Google Drive filename remains ONLY:
+Job Name.xlsx
 
-If you still see OneDrive, GitHub Pages is still serving the old file.
+Example:
+Job Name = Super Bowl
+Google Drive file = Super Bowl.xlsx
 
-Google Drive settings in this build:
-- Folder ID: 1up5yMK1xY-B-8fJ4SA8jx_DlnenBYUHy
-- OAuth Client ID: 37301141974-kurs082b8n02bh6vk4j5bk3d1ta1con2.apps.googleusercontent.com
+After uploading index.html to GitHub, open:
+https://paulboots.github.io/all-mobile-video-FS-Scan/?v=56

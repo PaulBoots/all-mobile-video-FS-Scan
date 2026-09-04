@@ -490,7 +490,7 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#111;color:#fff;padding:5px 8px;border-radius:6px;font:700 11px Arial">v51 · GOOGLE DRIVE ONLY</div>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#111;color:#fff;padding:5px 8px;border-radius:6px;font:700 11px Arial">v56 · GOOGLE DRIVE ONLY</div>
 <div class="app">
 <header>
 <div class="logo"><img src="amv-logo.jpg" alt="AMV"></div>
@@ -522,8 +522,8 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 
 
 <div class="googleDriveCard">
-  <h4>☁ GOOGLE DRIVE ONLY — JOBS · v51</h4>
-  <div class="googleDriveFixed">Automatic Excel backup to the shared Google Drive JOBS folder</div>
+  <h4>☁ GOOGLE DRIVE ONLY — JOBS · v56</h4>
+  <div class="googleDriveFixed">Automatic Excel backup to the shared Google Drive JOBS folder</div><div style="font-size:12px;margin-top:4px">File name: <b>Job Name.xlsx</b></div>
   <div class="googleDriveButtons">
     <button class="gdConnect" onclick="connectGoogleDrive()">CONNECT GOOGLE DRIVE</button>
     <button onclick="loadGoogleDriveJobs()">LOAD GOOGLE DRIVE JOB</button>
@@ -583,7 +583,7 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 <div id="msg" class="msg">Ready. Current mode: SCAN OUT.</div>
 </main>
 
-<footer><span>All Mobile Video v51</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + Google Drive Excel autosave when connected ✓</span></footer>
+<footer><span>All Mobile Video v56</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + Google Drive Excel autosave when connected ✓</span></footer>
 </div>
 
 
@@ -624,6 +624,7 @@ let cloudSavePending=false;
 let cloudSuspend=false;
 let currentCloudItemId="";
 let currentCloudFileName="";
+let lastCloudJobName="";
 
 function gdStatus(text,state="disconnected"){
   const el=document.getElementById("googleDriveStatus");
@@ -688,17 +689,28 @@ function initGoogleTokenClient(){
 function connectGoogleDrive(){
   if(location.protocol!=="https:"){
     gdStatus("OPENING SECURE GITHUB APP…","connecting");
-    gdFile("Google sign-in must run from the live GitHub Pages HTTPS site.");
-    setTimeout(()=>location.href="https://paulboots.github.io/all-mobile-video-FS-Scan/?v=51",400);
+    gdFile("Opening the correct GitHub Pages version.");
+    setTimeout(()=>location.href="https://paulboots.github.io/all-mobile-video-FS-Scan/?v=56",400);
     return;
   }
-  if(!googleTokenClient && !initGoogleTokenClient()){
-    gdStatus("GOOGLE SIGN-IN NOT READY","error");
-    gdFile("Reload the page and try again.");
-    return;
-  }
+
   gdStatus("OPENING GOOGLE SIGN-IN…","connecting");
-  googleTokenClient.requestAccessToken({prompt:"consent"});
+  gdFile("A Google sign-in window should open.");
+
+  if(!googleTokenClient){
+    if(!initGoogleTokenClient()){
+      gdStatus("GOOGLE SIGN-IN NOT READY","error");
+      gdFile("Google sign-in library did not load. Refresh the page and try again.");
+      return;
+    }
+  }
+
+  try{
+    googleTokenClient.requestAccessToken({prompt:"consent"});
+  }catch(e){
+    gdStatus("CONNECT ERROR","error");
+    gdFile(e.message || String(e));
+  }
 }
 async function getGoogleToken(){
   if(googleAccessToken&&Date.now()<googleTokenExpiresAt)return googleAccessToken;
@@ -754,14 +766,20 @@ async function testGoogleDrive(){
   }
 }
 function safeCloudName(){
-  const jn=clean(jobNumber.value)||clean(jobName.value)||"Job";
-  return ("All-Mobile-Video-"+jn+".xlsx").replace(/[\\/:*?"<>|]/g,"-");
+  const name=(jobName && jobName.value ? jobName.value.trim() : "") || "Job";
+  return (name + ".xlsx").replace(/[\/:*?"<>|]/g,"-");
 }
 function workbookBlob(){
   const bytes=XLSX.write(workbook(),{bookType:"xlsx",type:"array"});
   return new Blob([bytes],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
 }
 function scheduleCloudSave(delay=2200){
+  const currentName=clean(jobName.value);
+  if(currentName!==lastCloudJobName){
+    lastCloudJobName=currentName;
+    currentCloudItemId="";
+    currentCloudFileName="";
+  }
   if(cloudSuspend||!cloudAutoEnabled())return;
   if(!googleAccessToken&&!restoreGoogleToken())return;
   clearTimeout(cloudSaveTimer);
@@ -802,8 +820,8 @@ async function updateGoogleFile(fileId,blob){
 async function cloudSaveNow(silent=false){
   if(cloudSuspend)return;
   if(cloudSaving){cloudSavePending=true;return}
-  if(!clean(jobName.value)||!clean(jobNumber.value)){
-    if(!silent)gdStatus("ENTER JOB NAME + JOB NUMBER FIRST","error");
+  if(!clean(jobName.value)){
+    if(!silent)gdStatus("ENTER JOB NAME FIRST","error");
     return;
   }
   cloudSaving=true;cloudSavePending=false;
@@ -822,7 +840,7 @@ async function cloudSaveNow(silent=false){
     }
     currentCloudItemId=item.id||"";
     currentCloudFileName=item.name||filename;
-    gdStatus("SAVED ✓","saved");
+    gdStatus("SAVED TO GOOGLE DRIVE ✓","saved");
     gdFile(currentCloudFileName+" — "+new Date().toLocaleTimeString());
     if(!silent)message("Google Drive Excel updated: "+currentCloudFileName);
   }catch(e){
