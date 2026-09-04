@@ -455,6 +455,36 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
   .oneDriveFile{font-size:13px}
 }
 
+
+.scanAlarmOverlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:99999;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.scanAlarmOverlay.hidden{display:none!important}
+.scanAlarmBox{
+  width:min(760px,94vw);background:white;border:6px solid #d71920;border-radius:18px;
+  box-shadow:0 24px 90px rgba(0,0,0,.65);padding:34px;text-align:center;
+}
+.scanAlarmIcon{font-size:68px;line-height:1;margin-bottom:8px}
+.scanAlarmTitle{font-size:36px;font-weight:950;color:#b20d18;margin:0 0 16px}
+.scanAlarmText{font-size:27px;font-weight:850;line-height:1.3;color:#111;white-space:pre-line;margin-bottom:24px}
+.scanAlarmHint{font-size:17px;color:#555;margin-bottom:22px;font-weight:700}
+.scanAlarmOk{
+  width:min(360px,90%);min-height:72px;border:0;border-radius:10px;background:#d71920;
+  color:white;font-size:28px;font-weight:950;cursor:pointer;
+}
+.scanAlarmOk:focus{outline:5px solid #111;outline-offset:4px}
+body.scanAlarmActive{overflow:hidden}
+body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
+@media(max-width:700px){
+  .scanAlarmBox{padding:28px 18px;border-width:5px}
+  .scanAlarmIcon{font-size:60px}
+  .scanAlarmTitle{font-size:31px}
+  .scanAlarmText{font-size:24px}
+  .scanAlarmHint{font-size:16px}
+  .scanAlarmOk{min-height:76px;font-size:28px}
+}
+
 </style>
 </head>
 <body>
@@ -551,7 +581,18 @@ footer{grid-column:1/3;background:#050505;color:white;display:flex;justify-conte
 <div id="msg" class="msg">Ready. Current mode: SCAN OUT.</div>
 </main>
 
-<footer><span>All Mobile Video v48</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + OneDrive Excel autosave when connected ✓</span></footer>
+<footer><span>All Mobile Video v49</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + OneDrive Excel autosave when connected ✓</span></footer>
+</div>
+
+
+<div id="scanAlarmOverlay" class="scanAlarmOverlay hidden" role="alertdialog" aria-modal="true" aria-labelledby="scanAlarmTitle">
+  <div class="scanAlarmBox">
+    <div class="scanAlarmIcon">⚠️</div>
+    <div id="scanAlarmTitle" class="scanAlarmTitle">SCAN REJECTED</div>
+    <div id="scanAlarmText" class="scanAlarmText">Barcode rejected.</div>
+    <div class="scanAlarmHint">Scanning is stopped until you press OK.</div>
+    <button id="scanAlarmOk" class="scanAlarmOk" type="button" onclick="closeScanAlarm()">OK — CONTINUE SCANNING</button>
+  </div>
 </div>
 
 <div id="modal" class="modal hidden"><div class="modalcard"><button onclick="closeModal()" style="float:right">CLOSE</button><h2>Outstanding Items</h2><div id="modalBody"></div></div></div>
@@ -923,25 +964,56 @@ function addTruckName(){
   renderTruckOptions(name);newTruckName.value="";save();
 }
 function clock(){let d=new Date();date.textContent=d.toLocaleDateString();time.textContent=d.toLocaleTimeString()}setInterval(clock,1000);clock();
+
+let scanAlarmOpen=false;
+function showScanAlarm(text,title="SCAN REJECTED"){
+  if(scanAlarmOpen)return;
+  scanAlarmOpen=true;
+  rejectedSound();
+  message(text);
+  scanAlarmTitle.textContent=title;
+  scanAlarmText.textContent=text;
+  scanAlarmOverlay.classList.remove("hidden");
+  document.body.classList.add("scanAlarmActive");
+  scan.disabled=true;
+  setTimeout(()=>scanAlarmOk.focus(),20);
+}
+function closeScanAlarm(){
+  scanAlarmOpen=false;
+  scanAlarmOverlay.classList.add("hidden");
+  document.body.classList.remove("scanAlarmActive");
+  scan.disabled=false;
+  scan.value="";
+  scan.focus();
+}
+document.addEventListener("keydown",e=>{
+  if(!scanAlarmOpen)return;
+  e.preventDefault();
+  e.stopPropagation();
+  e.stopImmediatePropagation();
+  if(e.key==="Enter"||e.key==="Escape")closeScanAlarm();
+},true);
+
 function message(t){msg.textContent=t} function key(v){let s=clean(v).toLowerCase();return Object.keys(records).find(k=>k.toLowerCase()===s)||null}
 function setMode(m){mode=m;outBtn.classList.toggle("active",m==="OUT");inBtn.classList.toggle("active",m==="IN");message("Ready. Current mode: SCAN "+m+".");scan.focus()}
 function process(){
-if(complete){rejectedSound();message("Job is COMPLETE. Start NEW JOB to scan again.");return}
-if(!clean(jobName.value)||!clean(jobNumber.value)){rejectedSound();message("Enter Job Name and Job Number first.");return}
-if(mode==="OUT"&&!clean(scannerName.value)){rejectedSound();message("Enter PERSON SCAN OUT first.");return}
-if(mode==="IN"&&!clean(scannerInName.value)){rejectedSound();message("Enter PERSON SCAN IN first.");return}
+if(scanAlarmOpen)return;
+if(complete){showScanAlarm("Job is COMPLETE. Start NEW JOB to scan again.","SCANNING LOCKED");return}
+if(!clean(jobName.value)||!clean(jobNumber.value)){showScanAlarm("Enter Job Name and Job Number first.","JOB INFORMATION REQUIRED");return}
+if(mode==="OUT"&&!clean(scannerName.value)){showScanAlarm("Enter PERSON SCAN OUT first.","PERSON REQUIRED");return}
+if(mode==="IN"&&!clean(scannerInName.value)){showScanAlarm("Enter PERSON SCAN IN first.","PERSON REQUIRED");return}
 let b=clean(scan.value);if(!b)return;let k=key(b),t=now(),n=clean(notes.value);
 if(mode==="OUT"){
-if(k){rejectedSound();message("DUPLICATE BARCODE REJECTED — "+b+" already exists.");scan.value="";scan.focus();return}
+if(k){showScanAlarm("DUPLICATE BARCODE REJECTED\n\n"+b+" already exists.","DUPLICATE BARCODE");return}
 records[b]={barcode:b,notes:n,scanOut:t,scanOutBy:clean(scannerName.value),scanIn:"",scanInBy:"",status:"OUT"};history.push({type:"OUT",barcode:b});lastBarcode.textContent=b;lastStatus.textContent="(OUT)"
 }else{
-if(!k){rejectedSound();message("SCAN IN REJECTED — barcode was never scanned OUT.");scan.value="";scan.focus();return}
-let r=records[k];if(r.status==="IN"){rejectedSound();message("DUPLICATE SCAN IN REJECTED — "+k+" is already IN.");scan.value="";scan.focus();return}
+if(!k){showScanAlarm("SCAN IN REJECTED\n\n"+b+" was never scanned OUT.","BARCODE NOT FOUND");return}
+let r=records[k];if(r.status==="IN"){showScanAlarm("DUPLICATE SCAN IN REJECTED\n\n"+k+" is already IN.","ALREADY SCANNED IN");return}
 r.scanIn=t;r.scanInBy=clean(scannerInName.value);r.status="IN";if(n)r.notes=n;history.push({type:"IN",barcode:k});lastBarcode.textContent=k;lastStatus.textContent="(IN)"
 }
 save();render();acceptedSound();message("SCAN "+mode+" ACCEPTED — "+b);scan.value="";notes.value="";scan.focus()
 }
-scan.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();process()}});
+scan.addEventListener("keydown",e=>{if(scanAlarmOpen){e.preventDefault();return}if(e.key==="Enter"){e.preventDefault();process()}});
 function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
 function editNote(barcode){
   let k=key(barcode);if(!k)return;
