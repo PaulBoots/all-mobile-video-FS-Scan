@@ -1,18 +1,23 @@
-All Mobile Video v63
+All Mobile Video v64 — New Google Picker API Key
 
-FIXED:
-- Removed the automatic redirect that could send Google Drive Connect back to an older GitHub build.
-- CONNECT GOOGLE DRIVE now stays on the page you opened.
-- If you open a local file instead of GitHub HTTPS, it shows HTTPS REQUIRED and does not redirect.
-- Added a visible badge in the bottom-right: AMV BUILD v63.
-- Existing scanning, jobs, Excel, Google Drive and Google Picker features remain.
+CHANGED:
+- Replaced the previous Google Picker API key with the new key.
+- Preserved Google OAuth Client ID and Project/App ID.
+- CONNECT GOOGLE DRIVE remains.
+- SELECT JOBS FOLDER remains.
+- No redirect back to older versions.
+- Visible badge now says AMV BUILD v64.
+- Excel cloud filename remains Job Name.xlsx.
 
-UPLOAD:
-Replace your GitHub repository index.html with the v63 index.html.
+TEST:
+1. Upload index.html to GitHub.
+2. Open:
+   https://paulboots.github.io/all-mobile-video-FS-Scan/?v=64
+3. Confirm bottom-right says AMV BUILD v64.
+4. CONNECT GOOGLE DRIVE.
+5. SELECT JOBS FOLDER.
 
-OPEN:
-https://paulboots.github.io/all-mobile-video-FS-Scan/?v=63
-
-IMPORTANT:
-The bottom-right corner MUST say AMV BUILD v63.
-If it says v59, GitHub is still serving the old index.html.
+For the first test, if needed, leave Application restrictions = None.
+API restrictions can remain:
+- Google Picker API
+- Google Drive API
