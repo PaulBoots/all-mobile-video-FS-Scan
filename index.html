@@ -490,7 +490,7 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#111;color:#fff;padding:5px 8px;border-radius:6px;font:700 11px Arial">v65 · JOBS FOLDER ONLY</div>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#111;color:#fff;padding:5px 8px;border-radius:6px;font:700 11px Arial">v66 · WORKING JOBS AUTH</div>
 <div class="app">
 <header>
 <div class="logo"><img src="amv-logo.jpg" alt="AMV"></div>
@@ -522,7 +522,7 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 
 
 <div class="googleDriveCard">
-  <h4>☁ GOOGLE DRIVE ONLY — JOBS · v65</h4>
+  <h4>☁ GOOGLE DRIVE ONLY — JOBS · v66</h4>
   <div class="googleDriveFixed">Automatic Excel backup to the shared Google Drive JOBS folder</div><div style="font-size:12px;margin-top:4px">File name: <b>Job Name.xlsx</b></div>
   <div class="googleDriveButtons">
     <button class="gdConnect" onclick="connectGoogleDrive()">CONNECT GOOGLE DRIVE</button><button onclick="disconnectGoogleDrive()">DISCONNECT</button><button onclick="selectGoogleJobsFolder()">AUTHORIZE JOBS FOLDER</button>
@@ -583,7 +583,7 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 <div id="msg" class="msg">Ready. Current mode: SCAN OUT.</div>
 </main>
 
-<footer><span>All Mobile Video v65</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + Google Drive Excel autosave when connected ✓</span></footer>
+<footer><span>All Mobile Video v66</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + Google Drive Excel autosave when connected ✓</span></footer>
 </div>
 
 
@@ -651,7 +651,7 @@ function restoreGoogleFolder(){
   try{
     const f=JSON.parse(localStorage.getItem(GOOGLE_SELECTED_FOLDER_KEY)||"null");
     if(f&&f.id){
-      selectedGoogleFolderId=(f.id===AMV_JOBS_FOLDER_ID?f.id:"");
+      selectedGoogleFolderId=f.id;
       selectedGoogleFolderName=f.name||"JOBS";
       return true;
     }
@@ -669,51 +669,117 @@ async function selectGoogleJobsFolder(){
   try{
     if(!googleAccessToken && !restoreGoogleToken()){
       gdStatus("CONNECT GOOGLE DRIVE FIRST","error");
-      gdFile("Click CONNECT GOOGLE DRIVE before authorizing the JOBS folder.");
+      gdFile("Click CONNECT GOOGLE DRIVE before selecting the JOBS folder.");
       return;
     }
-
-    gdStatus("OPENING JOBS FOLDER AUTHORIZATION…","connecting");
-    gdFile("Select the JOBS folder shown in the Google window.");
+    gdStatus("OPENING FOLDER PICKER…","connecting");
+    gdFile("Choose the shared JOBS folder.");
     await loadPickerApi();
 
     const view=new google.picker.DocsView(google.picker.ViewId.FOLDERS)
       .setIncludeFolders(true)
-      .setSelectFolderEnabled(true)
-      .setParent(AMV_JOBS_FOLDER_ID);
+      .setSelectFolderEnabled(true);
 
     const picker=new google.picker.PickerBuilder()
       .setDeveloperKey(GOOGLE_PICKER_API_KEY)
       .setAppId(GOOGLE_PICKER_APP_ID)
       .setOAuthToken(await getGoogleToken())
       .addView(view)
-      .enableFeature(google.picker.Feature.NAV_HIDDEN)
-      .setTitle("Authorize AMV JOBS Folder")
+      .setTitle("Select JOBS folder")
       .setCallback((data)=>{
         if(data.action===google.picker.Action.PICKED && data.docs && data.docs.length){
           const d=data.docs[0];
           if(d.id!==AMV_JOBS_FOLDER_ID){
             gdStatus("WRONG FOLDER","error");
-            gdFile("Please authorize only the AMV JOBS folder.");
+            gdFile("Please choose the shared AMV JOBS folder only.");
             return;
           }
           rememberGoogleFolder(AMV_JOBS_FOLDER_ID,d.name||"JOBS");
           currentCloudItemId="";
           currentCloudFileName="";
           gdStatus("JOBS FOLDER AUTHORIZED ✓","connected");
-          gdFile("AMV JOBS folder only — autosave ready.");
+          gdFile("AMV JOBS folder — autosave ready.");
           scheduleCloudSave(500);
-        }else if(data.action===google.picker.Action.CANCEL){
-          gdStatus("CONNECTED — AUTHORIZE JOBS FOLDER","connected");
-          gdFile("The JOBS folder has not been authorized yet.");
         }
       })
       .build();
 
     picker.setVisible(true);
   }catch(e){
-    gdStatus("JOBS FOLDER AUTHORIZATION ERROR","error");
+    gdStatus("FOLDER PICKER ERROR","error");
     gdFile(e.message||String(e));
+  }
+}
+function cloudAutoEnabled(){
+  const e=document.getElementById("googleDriveAutoSave");
+  return !!(e&&e.checked);
+}
+function storeGoogleToken(token,expiresIn=3600){
+  googleAccessToken=token||"";
+  googleTokenExpiresAt=Date.now()+Math.max(60,Number(expiresIn||3600)-60)*1000;
+  sessionStorage.setItem(GOOGLE_TOKEN_KEY,JSON.stringify({
+    access_token:googleAccessToken,
+    expires_at:googleTokenExpiresAt
+  }));
+}
+function restoreGoogleToken(){
+  try{
+    const t=JSON.parse(sessionStorage.getItem(GOOGLE_TOKEN_KEY)||"null");
+    if(t&&t.access_token&&Date.now()<Number(t.expires_at||0)){
+      googleAccessToken=t.access_token;
+      googleTokenExpiresAt=Number(t.expires_at||0);
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+function initGoogleTokenClient(){
+  if(!window.google||!google.accounts||!google.accounts.oauth2)return false;
+  googleTokenClient=google.accounts.oauth2.initTokenClient({
+    client_id:GOOGLE_CLIENT_ID,
+    scope:GOOGLE_SCOPE,
+    callback:async (resp)=>{
+      if(resp.error){
+        gdStatus("CONNECT ERROR","error");
+        gdFile(resp.error_description||resp.error);
+        return;
+      }
+      storeGoogleToken(resp.access_token,resp.expires_in);
+      if(restoreGoogleFolder()){
+        gdStatus("CONNECTED — JOBS FOLDER READY","connected");
+        gdFile("Folder: "+selectedGoogleFolderName+" — autosave ready.");
+        scheduleCloudSave(800);
+      }else{
+        gdStatus("CONNECTED — AUTHORIZE JOBS FOLDER","connected");
+        gdFile("Google login successful. Now click AUTHORIZE JOBS FOLDER.");
+      }
+    }
+  });
+  return true;
+}
+function connectGoogleDrive(){
+  if(location.protocol!=="https:"){
+    gdStatus("HTTPS REQUIRED","error");
+    gdFile("Open the GitHub Pages website first. This build will not redirect to an older version.");
+    return;
+  }
+
+  gdStatus("OPENING GOOGLE SIGN-IN…","connecting");
+  gdFile("A Google sign-in window should open.");
+
+  if(!googleTokenClient){
+    if(!initGoogleTokenClient()){
+      gdStatus("GOOGLE SIGN-IN NOT READY","error");
+      gdFile("Google sign-in library did not load. Refresh the page and try again.");
+      return;
+    }
+  }
+
+  try{
+    googleTokenClient.requestAccessToken({prompt:"consent"});
+  }catch(e){
+    gdStatus("CONNECT ERROR","error");
+    gdFile(e.message || String(e));
   }
 }
 async function getGoogleToken(){
@@ -1250,5 +1316,5 @@ initGoogleDriveUI();
 render();setMode("OUT");scan.focus();
 
 </script>
-<div id="buildBadgeV63" style="position:fixed;right:10px;bottom:10px;z-index:99999;background:#111827;color:#fff;border:2px solid #38bdf8;border-radius:8px;padding:7px 10px;font:700 12px Arial,sans-serif">AMV BUILD v65</div>
+<div id="buildBadgeV63" style="position:fixed;right:10px;bottom:10px;z-index:99999;background:#111827;color:#fff;border:2px solid #38bdf8;border-radius:8px;padding:7px 10px;font:700 12px Arial,sans-serif">AMV BUILD v66</div>
 </body></html>

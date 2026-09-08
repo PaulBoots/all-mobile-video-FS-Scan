@@ -1,18 +1,16 @@
-All Mobile Video v65 — JOBS Folder Only
+All Mobile Video v66 — Working Google Drive Connection
 
-CHANGED:
-- The app now uses the fixed AMV shared JOBS folder.
-- Button renamed to AUTHORIZE JOBS FOLDER.
-- Google Picker navigation is hidden.
-- The app rejects selection of any folder other than the configured AMV JOBS folder.
-- Google Drive load/save continues to use only the authorized JOBS folder.
+FIX:
+- Reverted the over-restricted v65 Picker change that prevented connection.
+- Restored the v64 Google Drive connection flow that was working.
+- Button now says AUTHORIZE JOBS FOLDER.
+- The picker can open normally.
+- The app will ONLY accept the configured AMV JOBS folder.
+- If a different folder is selected, the app rejects it.
 - Excel filename remains Job Name.xlsx.
-- Existing scanning/job features are preserved.
+- Existing scanner/job features are preserved.
 
-IMPORTANT:
-Each employee's Google account must already have permission to the shared JOBS folder.
+Upload index.html to GitHub and open:
+https://paulboots.github.io/all-mobile-video-FS-Scan/?v=66
 
-Upload index.html to GitHub, then open:
-https://paulboots.github.io/all-mobile-video-FS-Scan/?v=65
-
-Confirm bottom-right says AMV BUILD v65.
+Confirm bottom-right says AMV BUILD v66.
