@@ -490,7 +490,7 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#111;color:#fff;padding:5px 8px;border-radius:6px;font:700 11px Arial">v56 · GOOGLE DRIVE ONLY</div>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#111;color:#fff;padding:5px 8px;border-radius:6px;font:700 11px Arial">v57 · GOOGLE DRIVE LIMITED ACCESS</div>
 <div class="app">
 <header>
 <div class="logo"><img src="amv-logo.jpg" alt="AMV"></div>
@@ -522,10 +522,10 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 
 
 <div class="googleDriveCard">
-  <h4>☁ GOOGLE DRIVE ONLY — JOBS · v56</h4>
+  <h4>☁ GOOGLE DRIVE ONLY — JOBS · v57</h4>
   <div class="googleDriveFixed">Automatic Excel backup to the shared Google Drive JOBS folder</div><div style="font-size:12px;margin-top:4px">File name: <b>Job Name.xlsx</b></div>
   <div class="googleDriveButtons">
-    <button class="gdConnect" onclick="connectGoogleDrive()">CONNECT GOOGLE DRIVE</button>
+    <button class="gdConnect" onclick="connectGoogleDrive()">CONNECT GOOGLE DRIVE</button><button onclick="disconnectGoogleDrive()">DISCONNECT</button>
     <button onclick="loadGoogleDriveJobs()">LOAD GOOGLE DRIVE JOB</button>
     <button onclick="testGoogleDrive()">TEST GOOGLE DRIVE</button><button onclick="cloudSaveNow()">SAVE NOW</button>
   </div>
@@ -583,7 +583,7 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 <div id="msg" class="msg">Ready. Current mode: SCAN OUT.</div>
 </main>
 
-<footer><span>All Mobile Video v56</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + Google Drive Excel autosave when connected ✓</span></footer>
+<footer><span>All Mobile Video v57</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + Google Drive Excel autosave when connected ✓</span></footer>
 </div>
 
 
@@ -611,8 +611,8 @@ window.pdfjsLib=pdfjsLib;
 
 const GOOGLE_CLIENT_ID='37301141974-kurs082b8n02bh6vk4j5bk3d1ta1con2.apps.googleusercontent.com';
 const GOOGLE_FOLDER_ID='1up5yMK1xY-B-8fJ4SA8jx_DlnenBYUHy';
-const GOOGLE_SCOPE="https://www.googleapis.com/auth/drive";
-const GOOGLE_TOKEN_KEY="allmobilevideo_v50_google_token";
+const GOOGLE_SCOPE="https://www.googleapis.com/auth/drive.file";
+const GOOGLE_TOKEN_KEY="allmobilevideo_v57_google_drive_file_token";
 const GD_AUTOSAVE_KEY="allmobilevideo_v50_gd_autosave";
 
 let googleAccessToken="";
@@ -690,7 +690,7 @@ function connectGoogleDrive(){
   if(location.protocol!=="https:"){
     gdStatus("OPENING SECURE GITHUB APP…","connecting");
     gdFile("Opening the correct GitHub Pages version.");
-    setTimeout(()=>location.href="https://paulboots.github.io/all-mobile-video-FS-Scan/?v=56",400);
+    setTimeout(()=>location.href="https://paulboots.github.io/all-mobile-video-FS-Scan/?v=57",400);
     return;
   }
 
@@ -907,6 +907,7 @@ function disconnectGoogleDrive(){
 function initGoogleDriveUI(){
   try{
     [
+      "allmobilevideo_v50_google_token",
       "allmobilevideo_v48_ms_tokens","allmobilevideo_v48_ms_pkce","allmobilevideo_v48_od_autosave",
       "allmobilevideo_v47_ms_tokens","allmobilevideo_v47_ms_pkce","allmobilevideo_v47_od_autosave",
       "allmobilevideo_v46_ms_tokens","allmobilevideo_v46_ms_pkce","allmobilevideo_v46_od_autosave"

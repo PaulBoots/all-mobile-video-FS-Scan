@@ -1,19 +1,14 @@
-All Mobile Video v56
+All Mobile Video v57
 
-FIXED GOOGLE DRIVE CONNECTION:
-v55 accidentally changed the GitHub Pages path from:
-https://paulboots.github.io/all-mobile-video-FS-Scan/
-to:
-https://paulboots.github.io/FS-Scan/
+Google Drive permission changed to the narrower drive.file permission.
+Old broad-scope token cache is not reused.
+Added DISCONNECT.
+Filename remains exactly Job Name.xlsx.
 
-v56 restores the correct GitHub Pages path.
+Open after GitHub upload:
+https://paulboots.github.io/all-mobile-video-FS-Scan/?v=57
 
-Google Drive filename remains ONLY:
-Job Name.xlsx
-
-Example:
-Job Name = Super Bowl
-Google Drive file = Super Bowl.xlsx
-
-After uploading index.html to GitHub, open:
-https://paulboots.github.io/all-mobile-video-FS-Scan/?v=56
+NOTE:
+The limited drive.file permission can manage files created/opened by this app.
+Using a pre-existing JOBS folder may require explicitly authorizing that folder
+with Google Picker in a later setup step.
