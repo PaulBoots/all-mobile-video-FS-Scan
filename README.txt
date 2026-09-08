@@ -1,23 +1,18 @@
-All Mobile Video v64 — New Google Picker API Key
+All Mobile Video v65 — JOBS Folder Only
 
 CHANGED:
-- Replaced the previous Google Picker API key with the new key.
-- Preserved Google OAuth Client ID and Project/App ID.
-- CONNECT GOOGLE DRIVE remains.
-- SELECT JOBS FOLDER remains.
-- No redirect back to older versions.
-- Visible badge now says AMV BUILD v64.
-- Excel cloud filename remains Job Name.xlsx.
+- The app now uses the fixed AMV shared JOBS folder.
+- Button renamed to AUTHORIZE JOBS FOLDER.
+- Google Picker navigation is hidden.
+- The app rejects selection of any folder other than the configured AMV JOBS folder.
+- Google Drive load/save continues to use only the authorized JOBS folder.
+- Excel filename remains Job Name.xlsx.
+- Existing scanning/job features are preserved.
 
-TEST:
-1. Upload index.html to GitHub.
-2. Open:
-   https://paulboots.github.io/all-mobile-video-FS-Scan/?v=64
-3. Confirm bottom-right says AMV BUILD v64.
-4. CONNECT GOOGLE DRIVE.
-5. SELECT JOBS FOLDER.
+IMPORTANT:
+Each employee's Google account must already have permission to the shared JOBS folder.
 
-For the first test, if needed, leave Application restrictions = None.
-API restrictions can remain:
-- Google Picker API
-- Google Drive API
+Upload index.html to GitHub, then open:
+https://paulboots.github.io/all-mobile-video-FS-Scan/?v=65
+
+Confirm bottom-right says AMV BUILD v65.
