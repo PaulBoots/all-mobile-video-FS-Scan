@@ -1,11 +1,18 @@
-All Mobile Video v59 — Google Connection Fix
+All Mobile Video v63
 
 FIXED:
-- v58 had a JavaScript syntax error caused by the Google folder variable being declared twice.
-- That error made CONNECT GOOGLE DRIVE appear to do nothing.
-- v59 removes the duplicate declaration and validates cleanly.
-- After login, click SELECT JOBS FOLDER.
-- Excel filename remains only Job Name.xlsx.
+- Removed the automatic redirect that could send Google Drive Connect back to an older GitHub build.
+- CONNECT GOOGLE DRIVE now stays on the page you opened.
+- If you open a local file instead of GitHub HTTPS, it shows HTTPS REQUIRED and does not redirect.
+- Added a visible badge in the bottom-right: AMV BUILD v63.
+- Existing scanning, jobs, Excel, Google Drive and Google Picker features remain.
 
-Open:
-https://paulboots.github.io/all-mobile-video-FS-Scan/?v=59
+UPLOAD:
+Replace your GitHub repository index.html with the v63 index.html.
+
+OPEN:
+https://paulboots.github.io/all-mobile-video-FS-Scan/?v=63
+
+IMPORTANT:
+The bottom-right corner MUST say AMV BUILD v63.
+If it says v59, GitHub is still serving the old index.html.

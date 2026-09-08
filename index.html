@@ -490,7 +490,7 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#111;color:#fff;padding:5px 8px;border-radius:6px;font:700 11px Arial">v59 · GOOGLE PICKER FIXED</div>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#111;color:#fff;padding:5px 8px;border-radius:6px;font:700 11px Arial">v63 · NO OLD REDIRECT</div>
 <div class="app">
 <header>
 <div class="logo"><img src="amv-logo.jpg" alt="AMV"></div>
@@ -522,7 +522,7 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 
 
 <div class="googleDriveCard">
-  <h4>☁ GOOGLE DRIVE ONLY — JOBS · v59</h4>
+  <h4>☁ GOOGLE DRIVE ONLY — JOBS · v63</h4>
   <div class="googleDriveFixed">Automatic Excel backup to the shared Google Drive JOBS folder</div><div style="font-size:12px;margin-top:4px">File name: <b>Job Name.xlsx</b></div>
   <div class="googleDriveButtons">
     <button class="gdConnect" onclick="connectGoogleDrive()">CONNECT GOOGLE DRIVE</button><button onclick="disconnectGoogleDrive()">DISCONNECT</button><button onclick="selectGoogleJobsFolder()">SELECT JOBS FOLDER</button>
@@ -583,7 +583,7 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 <div id="msg" class="msg">Ready. Current mode: SCAN OUT.</div>
 </main>
 
-<footer><span>All Mobile Video v59</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + Google Drive Excel autosave when connected ✓</span></footer>
+<footer><span>All Mobile Video v63</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + Google Drive Excel autosave when connected ✓</span></footer>
 </div>
 
 
@@ -612,7 +612,8 @@ window.pdfjsLib=pdfjsLib;
 
 const GOOGLE_CLIENT_ID='37301141974-kurs082b8n02bh6vk4j5bk3d1ta1con2.apps.googleusercontent.com';
 const GOOGLE_SCOPE="https://www.googleapis.com/auth/drive.file";
-const GOOGLE_PICKER_API_KEY="AIzaSyCuIx_y-0grnzTIJ42W_HtElNc0tpt80XY";
+const GOOGLE_PICKER_APP_ID="37301141974";
+const GOOGLE_PICKER_API_KEY="AIzaSyCdtBQ_1kXLyqjOIF-wsnc7rXQjD1PtCzk";
 const GOOGLE_SELECTED_FOLDER_KEY="allmobilevideo_v58_selected_google_folder";
 let selectedGoogleFolderId="";
 let selectedGoogleFolderName="";
@@ -680,6 +681,7 @@ async function selectGoogleJobsFolder(){
 
     const picker=new google.picker.PickerBuilder()
       .setDeveloperKey(GOOGLE_PICKER_API_KEY)
+      .setAppId(GOOGLE_PICKER_APP_ID)
       .setOAuthToken(await getGoogleToken())
       .addView(view)
       .setTitle("Select JOBS folder")
@@ -751,9 +753,8 @@ function initGoogleTokenClient(){
 }
 function connectGoogleDrive(){
   if(location.protocol!=="https:"){
-    gdStatus("OPENING SECURE GITHUB APP…","connecting");
-    gdFile("Opening the correct GitHub Pages version.");
-    setTimeout(()=>location.href="https://paulboots.github.io/all-mobile-video-FS-Scan/?v=59",400);
+    gdStatus("HTTPS REQUIRED","error");
+    gdFile("Open the GitHub Pages website first. This build will not redirect to an older version.");
     return;
   }
 
@@ -1309,4 +1310,5 @@ initGoogleDriveUI();
 render();setMode("OUT");scan.focus();
 
 </script>
+<div id="buildBadgeV63" style="position:fixed;right:10px;bottom:10px;z-index:99999;background:#111827;color:#fff;border:2px solid #38bdf8;border-radius:8px;padding:7px 10px;font:700 12px Arial,sans-serif">AMV BUILD v63</div>
 </body></html>
