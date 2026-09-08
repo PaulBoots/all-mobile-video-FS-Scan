@@ -490,7 +490,7 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 
 </style>
 </head>
-<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#111;color:#fff;padding:5px 8px;border-radius:6px;font:700 11px Arial">v57 · GOOGLE DRIVE LIMITED ACCESS</div>
+<body><div style="position:fixed;right:8px;bottom:8px;z-index:99999;background:#111;color:#fff;padding:5px 8px;border-radius:6px;font:700 11px Arial">v59 · GOOGLE PICKER FIXED</div>
 <div class="app">
 <header>
 <div class="logo"><img src="amv-logo.jpg" alt="AMV"></div>
@@ -522,10 +522,10 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 
 
 <div class="googleDriveCard">
-  <h4>☁ GOOGLE DRIVE ONLY — JOBS · v57</h4>
+  <h4>☁ GOOGLE DRIVE ONLY — JOBS · v59</h4>
   <div class="googleDriveFixed">Automatic Excel backup to the shared Google Drive JOBS folder</div><div style="font-size:12px;margin-top:4px">File name: <b>Job Name.xlsx</b></div>
   <div class="googleDriveButtons">
-    <button class="gdConnect" onclick="connectGoogleDrive()">CONNECT GOOGLE DRIVE</button><button onclick="disconnectGoogleDrive()">DISCONNECT</button>
+    <button class="gdConnect" onclick="connectGoogleDrive()">CONNECT GOOGLE DRIVE</button><button onclick="disconnectGoogleDrive()">DISCONNECT</button><button onclick="selectGoogleJobsFolder()">SELECT JOBS FOLDER</button>
     <button onclick="loadGoogleDriveJobs()">LOAD GOOGLE DRIVE JOB</button>
     <button onclick="testGoogleDrive()">TEST GOOGLE DRIVE</button><button onclick="cloudSaveNow()">SAVE NOW</button>
   </div>
@@ -583,7 +583,7 @@ body.scanAlarmActive .scaninput{pointer-events:none;opacity:.55}
 <div id="msg" class="msg">Ready. Current mode: SCAN OUT.</div>
 </main>
 
-<footer><span>All Mobile Video v57</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + Google Drive Excel autosave when connected ✓</span></footer>
+<footer><span>All Mobile Video v59</span><span>|</span><span>© All Mobile Video</span><span>|</span><span>Local autosave + Google Drive Excel autosave when connected ✓</span></footer>
 </div>
 
 
@@ -605,13 +605,17 @@ pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/p
 window.pdfjsLib=pdfjsLib;
 </script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://apis.google.com/js/api.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 
 
 const GOOGLE_CLIENT_ID='37301141974-kurs082b8n02bh6vk4j5bk3d1ta1con2.apps.googleusercontent.com';
-const GOOGLE_FOLDER_ID='1up5yMK1xY-B-8fJ4SA8jx_DlnenBYUHy';
 const GOOGLE_SCOPE="https://www.googleapis.com/auth/drive.file";
+const GOOGLE_PICKER_API_KEY="AIzaSyCuIx_y-0grnzTIJ42W_HtElNc0tpt80XY";
+const GOOGLE_SELECTED_FOLDER_KEY="allmobilevideo_v58_selected_google_folder";
+let selectedGoogleFolderId="";
+let selectedGoogleFolderName="";
 const GOOGLE_TOKEN_KEY="allmobilevideo_v57_google_drive_file_token";
 const GD_AUTOSAVE_KEY="allmobilevideo_v50_gd_autosave";
 
@@ -635,6 +639,68 @@ function gdStatus(text,state="disconnected"){
 function gdFile(text){
   const el=document.getElementById("googleDriveFile");
   if(el)el.textContent=text||"";
+}
+function rememberGoogleFolder(id,name){
+  selectedGoogleFolderId=id||"";
+  selectedGoogleFolderName=name||"JOBS";
+  try{localStorage.setItem(GOOGLE_SELECTED_FOLDER_KEY,JSON.stringify({id:selectedGoogleFolderId,name:selectedGoogleFolderName}))}catch(e){}
+}
+function restoreGoogleFolder(){
+  try{
+    const f=JSON.parse(localStorage.getItem(GOOGLE_SELECTED_FOLDER_KEY)||"null");
+    if(f&&f.id){
+      selectedGoogleFolderId=f.id;
+      selectedGoogleFolderName=f.name||"JOBS";
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+function loadPickerApi(){
+  return new Promise((resolve,reject)=>{
+    if(window.google&&google.picker){resolve();return}
+    if(!window.gapi){reject(new Error("Google Picker did not load."));return}
+    gapi.load("picker",{callback:resolve,onerror:()=>reject(new Error("Google Picker API failed to load."))});
+  });
+}
+async function selectGoogleJobsFolder(){
+  try{
+    if(!googleAccessToken && !restoreGoogleToken()){
+      gdStatus("CONNECT GOOGLE DRIVE FIRST","error");
+      gdFile("Click CONNECT GOOGLE DRIVE before selecting the JOBS folder.");
+      return;
+    }
+    gdStatus("OPENING FOLDER PICKER…","connecting");
+    gdFile("Choose the shared JOBS folder.");
+    await loadPickerApi();
+
+    const view=new google.picker.DocsView(google.picker.ViewId.FOLDERS)
+      .setIncludeFolders(true)
+      .setSelectFolderEnabled(true);
+
+    const picker=new google.picker.PickerBuilder()
+      .setDeveloperKey(GOOGLE_PICKER_API_KEY)
+      .setOAuthToken(await getGoogleToken())
+      .addView(view)
+      .setTitle("Select JOBS folder")
+      .setCallback((data)=>{
+        if(data.action===google.picker.Action.PICKED && data.docs && data.docs.length){
+          const d=data.docs[0];
+          rememberGoogleFolder(d.id,d.name||"JOBS");
+          currentCloudItemId="";
+          currentCloudFileName="";
+          gdStatus("JOBS FOLDER SELECTED ✓","connected");
+          gdFile("Folder: "+selectedGoogleFolderName);
+          scheduleCloudSave(500);
+        }
+      })
+      .build();
+
+    picker.setVisible(true);
+  }catch(e){
+    gdStatus("FOLDER PICKER ERROR","error");
+    gdFile(e.message||String(e));
+  }
 }
 function cloudAutoEnabled(){
   const e=document.getElementById("googleDriveAutoSave");
@@ -671,16 +737,13 @@ function initGoogleTokenClient(){
         return;
       }
       storeGoogleToken(resp.access_token,resp.expires_in);
-      gdStatus("VERIFYING GOOGLE DRIVE JOBS FOLDER…","connecting");
-      gdFile("Checking access to the shared JOBS folder.");
-      try{
-        const f=await verifyGoogleFolder();
-        gdStatus("CONNECTED TO GOOGLE DRIVE — JOBS ✓","connected");
-        gdFile("Folder: "+(f.name||"JOBS")+" — autosave ready.");
+      if(restoreGoogleFolder()){
+        gdStatus("CONNECTED — JOBS FOLDER READY","connected");
+        gdFile("Folder: "+selectedGoogleFolderName+" — autosave ready.");
         scheduleCloudSave(800);
-      }catch(e){
-        gdStatus("GOOGLE DRIVE FOLDER ERROR","error");
-        gdFile(e.message);
+      }else{
+        gdStatus("CONNECTED — SELECT JOBS FOLDER","connected");
+        gdFile("Google login successful. Now click SELECT JOBS FOLDER.");
       }
     }
   });
@@ -690,7 +753,7 @@ function connectGoogleDrive(){
   if(location.protocol!=="https:"){
     gdStatus("OPENING SECURE GITHUB APP…","connecting");
     gdFile("Opening the correct GitHub Pages version.");
-    setTimeout(()=>location.href="https://paulboots.github.io/all-mobile-video-FS-Scan/?v=57",400);
+    setTimeout(()=>location.href="https://paulboots.github.io/all-mobile-video-FS-Scan/?v=59",400);
     return;
   }
 
@@ -737,20 +800,24 @@ async function googleFetch(url,options={}){
   return r;
 }
 async function verifyGoogleFolder(){
+  if(!selectedGoogleFolderId && !restoreGoogleFolder()){
+    throw new Error("No JOBS folder selected. Click SELECT JOBS FOLDER.");
+  }
   const r=await googleFetch(
-    "https://www.googleapis.com/drive/v3/files/"+encodeURIComponent(GOOGLE_FOLDER_ID)+
+    "https://www.googleapis.com/drive/v3/files/"+encodeURIComponent(selectedGoogleFolderId)+
     "?fields=id,name,mimeType,capabilities(canAddChildren,canEdit)&supportsAllDrives=true"
   );
   const f=await r.json();
-  if(f.mimeType!=="application/vnd.google-apps.folder")throw new Error("The configured JOBS item is not a folder.");
-  if(f.capabilities&&f.capabilities.canAddChildren===false)throw new Error("Your Google account does not have permission to add files to this JOBS folder.");
+  if(f.mimeType!=="application/vnd.google-apps.folder")throw new Error("The selected item is not a folder.");
+  if(f.capabilities&&f.capabilities.canAddChildren===false)throw new Error("You do not have permission to add files to this folder.");
+  rememberGoogleFolder(f.id,f.name||selectedGoogleFolderName||"JOBS");
   return f;
 }
 async function testGoogleDrive(){
   try{
     gdStatus("TESTING GOOGLE DRIVE…","connecting");
     const f=await verifyGoogleFolder();
-    const q="'"+GOOGLE_FOLDER_ID+"' in parents and trashed=false";
+    const q="'"+selectedGoogleFolderId+"' in parents and trashed=false";
     const r=await googleFetch(
       "https://www.googleapis.com/drive/v3/files?q="+encodeURIComponent(q)+
       "&fields=files(id,name,modifiedTime,size)&pageSize=10&supportsAllDrives=true&includeItemsFromAllDrives=true"
@@ -786,7 +853,7 @@ function scheduleCloudSave(delay=2200){
   cloudSaveTimer=setTimeout(()=>cloudSaveNow(true),delay);
 }
 async function findGoogleJobFile(filename){
-  const q="'"+GOOGLE_FOLDER_ID+"' in parents and trashed=false and name='"+filename.replace(/'/g,"\\'")+"'";
+  const q="'"+selectedGoogleFolderId+"' in parents and trashed=false and name='"+filename.replace(/'/g,"\\'")+"'";
   const url="https://www.googleapis.com/drive/v3/files?q="+encodeURIComponent(q)+
     "&fields=files(id,name,modifiedTime,size)&spaces=drive&pageSize=20&supportsAllDrives=true&includeItemsFromAllDrives=true";
   const r=await googleFetch(url);
@@ -795,7 +862,7 @@ async function findGoogleJobFile(filename){
 }
 async function createGoogleFile(filename,blob){
   const boundary="-------amv"+Date.now();
-  const metadata={name:filename,parents:[GOOGLE_FOLDER_ID]};
+  const metadata={name:filename,parents:[selectedGoogleFolderId]};
   const body=new Blob([
     "--"+boundary+"\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n",
     JSON.stringify(metadata),
@@ -856,7 +923,7 @@ async function loadGoogleDriveJobs(){
   try{
     await verifyGoogleFolder();
     gdStatus("LOADING JOB LIST…","connecting");
-    const q="'"+GOOGLE_FOLDER_ID+"' in parents and trashed=false and mimeType='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'";
+    const q="'"+selectedGoogleFolderId+"' in parents and trashed=false and mimeType='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'";
     const url="https://www.googleapis.com/drive/v3/files?q="+encodeURIComponent(q)+
       "&fields=files(id,name,modifiedTime,size)&orderBy=modifiedTime desc&pageSize=200&supportsAllDrives=true&includeItemsFromAllDrives=true";
     const r=await googleFetch(url),d=await r.json();
@@ -905,6 +972,7 @@ function disconnectGoogleDrive(){
   gdFile("No cloud file selected yet.");
 }
 function initGoogleDriveUI(){
+  restoreGoogleFolder();
   try{
     [
       "allmobilevideo_v50_google_token",
@@ -924,7 +992,7 @@ function initGoogleDriveUI(){
   }
   if(restoreGoogleToken()){
     gdStatus("CONNECTED — AUTOSAVE READY","connected");
-    gdFile("Google session restored.");
+    gdFile(selectedGoogleFolderId ? ("Folder: "+selectedGoogleFolderName) : "Connected. Click SELECT JOBS FOLDER.");
   }
   let tries=0;
   const t=setInterval(()=>{

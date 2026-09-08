@@ -1,14 +1,11 @@
-All Mobile Video v57
+All Mobile Video v59 — Google Connection Fix
 
-Google Drive permission changed to the narrower drive.file permission.
-Old broad-scope token cache is not reused.
-Added DISCONNECT.
-Filename remains exactly Job Name.xlsx.
+FIXED:
+- v58 had a JavaScript syntax error caused by the Google folder variable being declared twice.
+- That error made CONNECT GOOGLE DRIVE appear to do nothing.
+- v59 removes the duplicate declaration and validates cleanly.
+- After login, click SELECT JOBS FOLDER.
+- Excel filename remains only Job Name.xlsx.
 
-Open after GitHub upload:
-https://paulboots.github.io/all-mobile-video-FS-Scan/?v=57
-
-NOTE:
-The limited drive.file permission can manage files created/opened by this app.
-Using a pre-existing JOBS folder may require explicitly authorizing that folder
-with Google Picker in a later setup step.
+Open:
+https://paulboots.github.io/all-mobile-video-FS-Scan/?v=59
